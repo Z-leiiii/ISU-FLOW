@@ -23,10 +23,10 @@ class UserSeeder extends Seeder
             'middle_name' => null,
             'email' => 'admin@isu.edu.ph',
             'password' => Hash::make('password'),
-            'department_id' => 1, // Will be updated to actual admin department
-            'position' => 'System Administrator',
-            'employment_type' => 'regular',
-            'hire_date' => now(),
+            'department_id' => 1,
+            'designation_id' => 6, // HR Manager designation
+            'date_hired' => now(),
+            'salary' => 50000.00,
             'contact_number' => '123-456-7890',
             'address' => 'ISU Main Campus',
             'is_active' => true,
@@ -42,10 +42,10 @@ class UserSeeder extends Seeder
             'middle_name' => null,
             'email' => 'hr@isu.edu.ph',
             'password' => Hash::make('password'),
-            'department_id' => 2, // Will be updated to actual HR department
-            'position' => 'HR Manager',
-            'employment_type' => 'regular',
-            'hire_date' => now(),
+            'department_id' => 2,
+            'designation_id' => 6, // HR Manager designation
+            'date_hired' => now(),
+            'salary' => 45000.00,
             'contact_number' => '123-456-7891',
             'address' => 'ISU Main Campus',
             'is_active' => true,
@@ -53,16 +53,23 @@ class UserSeeder extends Seeder
 
         $hr->assignRole('hr');
 
-        // Update department heads after creating users
-        $itDepartment = Department::find(1);
-        if ($itDepartment) {
-            $itDepartment->update(['head_of_department' => $admin->id]);
-        }
+        // Create sample employee
+        $employee = User::create([
+            'employee_id' => 'EMP001',
+            'first_name' => 'Juan',
+            'last_name' => 'Dela Cruz',
+            'middle_name' => 'Santos',
+            'email' => 'juan.delacruz@isu.edu.ph',
+            'password' => Hash::make('password'),
+            'department_id' => 3, // Academic Affairs
+            'designation_id' => 1, // Professor
+            'date_hired' => now()->subYears(3),
+            'salary' => 35000.00,
+            'contact_number' => '123-456-7892',
+            'address' => 'ISU Main Campus',
+            'is_active' => true,
+        ]);
 
-        $hrDepartment = Department::find(2);
-        if ($hrDepartment) {
-            $hrDepartment->update(['head_of_department' => $hr->id]);
-        }
-        Department::where('id', 4)->update(['head_of_department' => 6]); // Academic Affairs Head
+        $employee->assignRole('employee');
     }
 }

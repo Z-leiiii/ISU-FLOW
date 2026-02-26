@@ -12,18 +12,16 @@ class LeaveCredit extends Model
     protected $fillable = [
         'user_id',
         'leave_type_id',
-        'credits_earned',
-        'credits_used',
-        'credits_balance',
-        'year',
+        'total_earned',
+        'total_used',
+        'as_of_date',
         'remarks',
     ];
 
     protected $casts = [
-        'credits_earned' => 'decimal:2',
-        'credits_used' => 'decimal:2',
-        'credits_balance' => 'decimal:2',
-        'year' => 'integer',
+        'total_earned' => 'decimal:2',
+        'total_used' => 'decimal:2',
+        'as_of_date' => 'date',
     ];
 
     /**

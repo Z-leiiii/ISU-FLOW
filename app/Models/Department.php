@@ -13,7 +13,6 @@ class Department extends Model
         'name',
         'code',
         'description',
-        'head_of_department',
         'is_active',
     ];
 

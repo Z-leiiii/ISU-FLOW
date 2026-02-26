@@ -20,7 +20,7 @@ class LeaveCreditController extends Controller
         
         if ($user->hasRole('admin') || $user->hasRole('hr')) {
             // HR and Admin can see all employees' leave credits
-            $employees = User::with(['department', 'leaveBalances.leaveType'])
+            $employees = User::with(['department', 'leaveCredits.leaveType'])
                 ->where('is_active', true)
                 ->orderBy('last_name')
                 ->orderBy('first_name')

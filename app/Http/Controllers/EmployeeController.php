@@ -28,7 +28,9 @@ class EmployeeController extends Controller
             ->orderBy('first_name')
             ->paginate(15);
 
-        return view('employees.index', compact('employees'));
+        $departments = Department::orderBy('name')->get();
+
+        return view('employees.index', compact('employees', 'departments'));
     }
 
     /**

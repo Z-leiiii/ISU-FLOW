@@ -12,25 +12,34 @@ class LeaveApplication extends Model
     protected $fillable = [
         'user_id',
         'leave_type_id',
+        'application_number',
+        'date_filed',
         'start_date',
         'end_date',
-        'total_days',
+        'number_of_days',
         'reason',
         'status',
-        'remarks',
-        'attachment_path',
+        'is_without_pay',
+        'hr_remarks',
+        'department_head_remarks',
+        'recommended_at',
         'approved_at',
-        'rejected_at',
+        'disapproved_at',
+        'recommended_by',
         'approved_by',
-        'rejected_by',
+        'disapproved_by',
+        'document_path',
     ];
 
     protected $casts = [
+        'date_filed' => 'date',
         'start_date' => 'date',
         'end_date' => 'date',
-        'total_days' => 'decimal:2',
+        'number_of_days' => 'integer',
+        'is_without_pay' => 'boolean',
+        'recommended_at' => 'datetime',
         'approved_at' => 'datetime',
-        'rejected_at' => 'datetime',
+        'disapproved_at' => 'datetime',
     ];
 
     /**
@@ -50,11 +59,11 @@ class LeaveApplication extends Model
     }
 
     /**
-     * Get the approvals for the leave application.
+     * Get the user who recommended the leave application.
      */
-    public function approvals()
+    public function recommendedBy()
     {
-        return $this->hasMany(LeaveApproval::class);
+        return $this->belongsTo(User::class, 'recommended_by');
     }
 
     /**
@@ -66,10 +75,10 @@ class LeaveApplication extends Model
     }
 
     /**
-     * Get the user who rejected the leave application.
+     * Get the user who disapproved the leave application.
      */
-    public function rejectedBy()
+    public function disapprovedBy()
     {
-        return $this->belongsTo(User::class, 'rejected_by');
+        return $this->belongsTo(User::class, 'disapproved_by');
     }
 }

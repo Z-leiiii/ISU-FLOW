@@ -21,14 +21,14 @@ class User extends Authenticatable
     protected $fillable = [
         'employee_id',
         'first_name',
-        'last_name',
         'middle_name',
+        'last_name',
         'email',
         'password',
         'department_id',
-        'position',
-        'employment_type',
-        'hire_date',
+        'designation_id',
+        'date_hired',
+        'salary',
         'contact_number',
         'address',
         'is_active',
@@ -54,7 +54,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
-            'hire_date' => 'date',
+            'date_hired' => 'date',
+            'salary' => 'decimal:2',
             'is_active' => 'boolean',
         ];
     }
@@ -68,19 +69,19 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the designation that owns the user.
+     */
+    public function designation()
+    {
+        return $this->belongsTo(Designation::class);
+    }
+
+    /**
      * Get the leave credits for the user.
      */
     public function leaveCredits()
     {
         return $this->hasMany(LeaveCredit::class);
-    }
-
-    /**
-     * Get the leave balances for the user.
-     */
-    public function leaveBalances()
-    {
-        return $this->hasMany(LeaveBalance::class);
     }
 
     /**
@@ -92,27 +93,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the attendance records for the user.
+     * Get the designation documents for the user.
      */
-    public function attendanceRecords()
+    public function designationDocuments()
     {
-        return $this->hasMany(AttendanceRecord::class);
-    }
-
-    /**
-     * Get the tardiness records for the user.
-     */
-    public function tardinessRecords()
-    {
-        return $this->hasMany(TardinessRecord::class);
-    }
-
-    /**
-     * Get the leave monetizations for the user.
-     */
-    public function leaveMonetizations()
-    {
-        return $this->hasMany(LeaveMonetization::class);
+        return $this->hasMany(DesignationDocument::class);
     }
 
     /**
@@ -121,14 +106,6 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(Notification::class);
-    }
-
-    /**
-     * Get the audit logs for the user.
-     */
-    public function auditLogs()
-    {
-        return $this->hasMany(AuditLog::class);
     }
 
     /**
