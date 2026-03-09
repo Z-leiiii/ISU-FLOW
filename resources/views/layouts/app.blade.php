@@ -15,7 +15,7 @@
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #ffffff;
             min-height: 100vh;
             color: #333;
         }
@@ -39,7 +39,7 @@
         .logo {
             font-size: 1.5rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -55,7 +55,7 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -85,9 +85,9 @@
             top: 80px;
             bottom: 0;
             width: 280px;
-            background: rgba(255, 255, 255, 0.95);
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
             backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
             padding: 2rem 1rem;
             overflow-y: auto;
             z-index: 999;
@@ -101,7 +101,7 @@
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            color: #999;
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 0.5rem;
             letter-spacing: 0.05em;
         }
@@ -111,7 +111,7 @@
             align-items: center;
             gap: 0.75rem;
             padding: 0.75rem 1rem;
-            color: #555;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
             border-radius: 0.5rem;
             transition: all 0.2s ease;
@@ -119,13 +119,13 @@
         }
         
         .nav-link:hover {
-            background: rgba(102, 126, 234, 0.1);
-            color: #667eea;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
             transform: translateX(4px);
         }
         
         .nav-link.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: rgba(255, 255, 255, 0.2);
             color: white;
         }
         
@@ -142,6 +142,7 @@
             margin-left: 280px;
             margin-top: 80px;
             padding: 2rem;
+            background: #f8fafc;
             min-height: calc(100vh - 80px);
         }
         
@@ -200,6 +201,9 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
         }
         
         .stat-label {
@@ -223,13 +227,13 @@
         }
         
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
             color: white;
         }
         
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 4px 12px rgba(4, 120, 87, 0.4);
         }
         
         .btn-secondary {
@@ -277,23 +281,51 @@
         }
         
         .badge-success {
-            background: rgba(34, 197, 94, 0.1);
-            color: #16a34a;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
         }
         
         .badge-warning {
-            background: rgba(245, 158, 11, 0.1);
-            color: #d97706;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
         }
         
         .badge-danger {
-            background: rgba(239, 68, 68, 0.1);
-            color: #dc2626;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
         }
         
         .badge-info {
-            background: rgba(59, 130, 246, 0.1);
-            color: #2563eb;
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
         }
         
         /* Responsive */

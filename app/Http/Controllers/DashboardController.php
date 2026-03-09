@@ -10,6 +10,26 @@ use App\Models\LeaveCredit;
 use App\Models\LeaveType;
 use App\Models\DesignationDocument;
 use App\Models\Notification;
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+=======
+use App\Services\LeaveCreditService;
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+use App\Services\LeaveCreditService;
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+use App\Services\LeaveCreditService;
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+use App\Services\LeaveCreditService;
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+use App\Services\LeaveCreditService;
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -35,6 +55,11 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
         // Get leave balances
         $leaveBalances = LeaveCredit::where('user_id', $user->id)
             ->with('leaveType')
@@ -44,6 +69,39 @@ class DashboardController extends Controller
                     ->whereColumn('user_id', 'leave_credits.user_id')
                     ->whereColumn('leave_type_id', 'leave_credits.leave_type_id');
             })
+=======
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+        // Get leave balances with new computation
+        $leaveBalances = LeaveCredit::where('user_id', $user->id)
+            ->with('leaveType')
+            ->get();
+
+        // Update leave credits using new computation
+        LeaveCreditService::updateUserAllLeaveCredits($user->id);
+        
+        // Get updated leave balances
+        $leaveBalances = LeaveCredit::where('user_id', $user->id)
+            ->with('leaveType')
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
             ->get();
 
         // Get recent leave applications
@@ -131,7 +189,67 @@ class DashboardController extends Controller
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
             ->count();
+=======
+            ->with(['user', 'leaveType'])
+            ->limit(10)
+            ->get();
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+            ->with(['user', 'leaveType'])
+            ->limit(10)
+            ->get();
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+            ->with(['user', 'leaveType'])
+            ->limit(10)
+            ->get();
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+            ->with(['user', 'leaveType'])
+            ->limit(10)
+            ->get();
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+            ->with(['user', 'leaveType'])
+            ->limit(10)
+            ->get();
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+            ->with(['user', 'leaveType'])
+            ->limit(10)
+            ->get();
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+            ->with(['user', 'leaveType'])
+            ->limit(10)
+            ->get();
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+            ->with(['user', 'leaveType'])
+            ->limit(10)
+            ->get();
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+            ->with(['user', 'leaveType'])
+            ->limit(10)
+            ->get();
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+            ->with(['user', 'leaveType'])
+            ->limit(10)
+            ->get();
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
             ->with(['user', 'leaveType'])
             ->limit(10)
