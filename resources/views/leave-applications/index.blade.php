@@ -1,201 +1,165 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISU-Flow - Leave Applications</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-    <!-- Navigation -->
-    <nav class="bg-green-600">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <h1 class="text-white text-xl font-bold">ISU-Flow</h1>
-                    </div>
-                    <div class="hidden md:block">
-                        <div class="ml-10 flex items-baseline space-x-4">
-                            <a href="{{ route('dashboard') }}" class="text-green-200 hover:bg-green-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
-                            <a href="{{ route('leave-applications.index') }}" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">My Applications</a>
-                            @if(Auth::user()->hasAnyRole(['admin', 'hr']))
-                                <a href="{{ route('admin.leave-applications.index') }}" class="text-green-200 hover:bg-green-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Employee Applications</a>
-                                <a href="{{ route('leave-credits.index') }}" class="text-green-200 hover:bg-green-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Leave Credits</a>
-                            @endif
-                            <a href="{{ route('attendance.index') }}" class="text-green-200 hover:bg-green-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Attendance</a>
-                            @if(Auth::user()->hasAnyRole(['admin', 'hr']))
-                                <a href="{{ route('reports.index') }}" class="text-green-200 hover:bg-green-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Reports</a>
-                            @endif
-                            @if(Auth::user()->hasRole('admin'))
-                                <a href="{{ route('employees.index') }}" class="text-green-200 hover:bg-green-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Employees</a>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <div class="ml-3 relative">
-                        <div class="flex items-center text-white">
-                            <span class="mr-2">{{ Auth::user()->full_name }}</span>
-                            <span class="text-sm text-green-200">{{ Auth::user()->position }}</span>
-                        </div>
-                        <form action="{{ route('logout') }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="ml-4 text-green-200 hover:text-white text-sm">Logout</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+@extends('layouts.app')
+
+@section('title', 'My Leave Applications')
+
+@section('content')
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">My Leave Applications</h3>
+        <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <span style="background: rgba(34, 197, 94, 0.1); color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem;">
+                {{ $applications->count() }} Total Applications
+            </span>
+            <span style="background: rgba(34, 197, 94, 0.1); color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem;">
+                {{ $applications->where('status', 'pending')->count() }} Pending
+            </span>
         </div>
-    </nav>
-
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <!-- Page Header -->
-        <div class="px-4 py-6 sm:px-0 flex justify-between items-center">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-900">Leave Applications</h1>
-                <p class="mt-2 text-gray-600">Manage your leave applications</p>
-            </div>
-            <a href="{{ route('leave-applications.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
-                New Application
-            </a>
-        </div>
-
-        <!-- Success/Error Messages -->
-        @if (session('success'))
-            <div class="px-4 py-6 sm:px-0">
-                <div class="rounded-md bg-green-50 p-4">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-green-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-green-800">{{ session('success') }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
-
-        @if (session('error'))
-            <div class="px-4 py-6 sm:px-0">
-                <div class="rounded-md bg-red-50 p-4">
-                    <div class="flex">
-                        <div class="flex-shrink-0">
-                            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <div class="ml-3">
-                            <p class="text-sm font-medium text-red-800">{{ session('error') }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        @endif
-
-        <!-- Applications Table -->
-        <div class="px-4 py-6 sm:px-0">
-            <div class="bg-white shadow overflow-hidden sm:rounded-md">
-                <div class="px-4 py-5 sm:px-6">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <h3 class="text-lg leading-6 font-medium text-gray-900">My Leave Applications</h3>
-                            <p class="mt-1 max-w-2xl text-sm text-gray-500">A list of all your leave applications including their status and details.</p>
-                        </div>
-                        @if(!Auth::user()->hasAnyRole(['hr', 'admin']))
-                            <a href="{{ route('leave-applications.create') }}" class="bg-green-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-green-700">
-                                Apply for Leave
-                            </a>
-                        @endif
-                    </div>
-                </div>
-                <ul class="divide-y divide-gray-200">
-                    @forelse ($applications as $application)
-                        <li class="px-4 py-4 sm:px-6 hover:bg-gray-50">
-                            <div class="flex items-center justify-between">
-                                <div class="flex-1">
-                                    <div class="flex items-center">
-                                        <div class="flex-shrink-0">
-                                            <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                                                <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
-                                                </svg>
-                                            </div>
-                                        </div>
-                                        <div class="ml-4">
-                                            <div class="flex items-center">
-                                                <h4 class="text-lg font-medium text-gray-900">{{ $application->leaveType->name }}</h4>
-                                                <span class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                    @if ($application->status == 'approved') bg-green-100 text-green-800
-                                                    @elseif ($application->status == 'rejected') bg-red-100 text-red-800
-                                                    @elseif ($application->status == 'pending') bg-yellow-100 text-yellow-800
-                                                    @else bg-gray-100 text-gray-800
-                                                    @endif">
-                                                    {{ ucfirst($application->status) }}
-                                                </span>
-                                            </div>
-                                            <p class="text-sm text-gray-500">
-                                                {{ $application->start_date->format('M d, Y') }} - {{ $application->end_date->format('M d, Y') }}
-                                                ({{ $application->total_days }} days)
-                                            </p>
-                                            <p class="text-sm text-gray-500 mt-1">{{ $application->reason }}</p>
-                                            @if ($application->status == 'pending')
-                                                <p class="text-xs text-green-600 mt-2">
-                                                    <svg class="inline h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                    </svg>
-                                                    Forwarded to HR for approval
-                                                </p>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center space-x-2">
-                                    <a href="{{ route('leave-applications.show', $application) }}" class="text-blue-600 hover:text-blue-900 text-sm font-medium">View</a>
-                                    @if ($application->status == 'pending')
-                                        <a href="{{ route('leave-applications.edit', $application) }}" class="text-blue-600 hover:text-blue-900 text-sm font-medium">Edit</a>
-                                        <form action="{{ route('leave-applications.destroy', $application) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to cancel this application?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="text-red-600 hover:text-red-900 text-sm font-medium">Cancel</button>
-                                        </form>
-                                    @endif
-                                </div>
+        <a href="{{ route('leave-applications.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Apply for Leave
+        </a>
+    </div>
+    
+    <!-- Filters -->
+    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+        <form method="GET" style="display: flex; gap: 0.5rem; align-items: center;">
+            <select name="status" class="form-control" style="width: auto;">
+                <option value="">All Status</option>
+                <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
+                <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
+                <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
+            </select>
+            <select name="leave_type" class="form-control" style="width: auto;">
+                <option value="">All Leave Types</option>
+                @foreach($leaveTypes as $type)
+                    <option value="{{ $type->id }}" {{ request('leave_type') == $type->id ? 'selected' : '' }}>
+                        {{ $type->name }}
+                    </option>
+                @endforeach
+            </select>
+            <button type="submit" class="btn btn-primary">Filter</button>
+            <a href="{{ route('leave-applications.index') }}" class="btn btn-secondary">Clear</a>
+        </form>
+    </div>
+    
+    <div style="overflow-x: auto;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Leave Type</th>
+                    <th>Duration</th>
+                    <th>Reason</th>
+                    <th>Status</th>
+                    <th>Applied On</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($applications as $application)
+                    <tr>
+                        <td>
+                            <div style="font-weight: 600;">{{ $application->leaveType->name }}</div>
+                            <div style="font-size: 0.85rem; color: #666;">{{ $application->days_requested }} days</div>
+                        </td>
+                        <td>
+                            <div style="font-weight: 600;">{{ $application->start_date->format('M d, Y') }}</div>
+                            <div style="font-size: 0.85rem; color: #666;">to {{ $application->end_date->format('M d, Y') }}</div>
+                        </td>
+                        <td>
+                            <div style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $application->reason }}">
+                                {{ $application->reason }}
                             </div>
-                        </li>
-                    @empty
-                        <li class="px-4 py-8 text-center">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                            <h3 class="mt-2 text-sm font-medium text-gray-900">No leave applications</h3>
-                            <p class="mt-1 text-sm text-gray-500">Get started by creating a new leave application.</p>
-                            <div class="mt-6">
-                                <a href="{{ route('leave-applications.create') }}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                                    </svg>
-                                    New Application
+                        </td>
+                        <td>
+                            @if($application->status == 'pending')
+                                <span class="badge badge-warning">
+                                    <i class="fas fa-clock"></i> Pending
+                                </span>
+                            @elseif($application->status == 'approved')
+                                <span class="badge badge-success">
+                                    <i class="fas fa-check"></i> Approved
+                                </span>
+                            @elseif($application->status == 'rejected')
+                                <span class="badge badge-danger">
+                                    <i class="fas fa-times"></i> Rejected
+                                </span>
+                            @endif
+                        </td>
+                        <td>
+                            <div style="font-size: 0.85rem; color: #666;">
+                                {{ $application->created_at->format('M d, Y') }}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="{{ route('leave-applications.show', $application) }}" class="btn btn-primary" style="padding: 0.5rem 1rem;">
+                                    <i class="fas fa-eye"></i> View
                                 </a>
+                                @if($application->status == 'pending')
+                                    <a href="{{ route('leave-applications.edit', $application) }}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                @endif
                             </div>
-                        </li>
-                    @endforelse
-                </ul>
-                
-                <!-- Pagination -->
-                @if ($applications->hasPages())
-                    <div class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-                        {{ $applications->links() }}
-                    </div>
-                @endif
-            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem;">
+                            <div style="color: #666;">
+                                <i class="fas fa-file-alt" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                                No leave applications found.
+                            </div>
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Quick Actions</h3>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+        <a href="{{ route('leave-applications.create') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Apply for Leave
+        </a>
+        <a href="{{ route('dashboard.leave-balances') }}" class="btn btn-secondary">
+            <i class="fas fa-balance-scale"></i> View Leave Balances
+        </a>
+        <a href="{{ route('dashboard.leave-history') }}" class="btn btn-secondary">
+            <i class="fas fa-history"></i> Leave History
+        </a>
+        <a href="{{ route('dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+    </div>
+</div>
+
+<div class="card" style="background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);">
+    <div class="card-header">
+        <h3 class="card-title" style="color: #2563eb;">
+            <i class="fas fa-info-circle"></i> Application Summary
+        </h3>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; color: #333;">
+        <div style="text-align: center; padding: 1rem; background: rgba(255, 255, 255, 0.8); border-radius: 0.5rem;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: #667eea;">{{ $applications->count() }}</div>
+            <div style="font-size: 0.85rem;">Total Applications</div>
         </div>
-    </main>
-</body>
-</html>
+        <div style="text-align: center; padding: 1rem; background: rgba(255, 255, 255, 0.8); border-radius: 0.5rem;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: #f59e0b;">{{ $applications->where('status', 'pending')->count() }}</div>
+            <div style="font-size: 0.85rem;">Pending</div>
+        </div>
+        <div style="text-align: center; padding: 1rem; background: rgba(255, 255, 255, 0.8); border-radius: 0.5rem;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: #10b981;">{{ $applications->where('status', 'approved')->count() }}</div>
+            <div style="font-size: 0.85rem;">Approved</div>
+        </div>
+        <div style="text-align: center; padding: 1rem; background: rgba(255, 255, 255, 0.8); border-radius: 0.5rem;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: #ef4444;">{{ $applications->where('status', 'rejected')->count() }}</div>
+            <div style="font-size: 0.85rem;">Rejected</div>
+        </div>
+    </div>
+</div>
+@endsection

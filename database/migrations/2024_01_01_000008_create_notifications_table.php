@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('notifications', function (Blueprint $table) {
@@ -16,17 +13,17 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('message');
-            $table->enum('type', ['leave_application', 'leave_approval', 'leave_rejection', 'leave_balance', 'attendance', 'tardiness', 'system'])->default('system');
+            $table->string('type'); // leave_application, leave_approval, leave_balance_alert, etc.
             $table->boolean('is_read')->default(false);
             $table->timestamp('read_at')->nullable();
-            $table->morphs('notifiable');
+            $table->json('data')->nullable(); // Additional data for the notification
             $table->timestamps();
+            
+            $table->index(['user_id', 'is_read']);
+            $table->index(['type']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('notifications');

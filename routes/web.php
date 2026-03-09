@@ -2,8 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeaveApplicationController;
 use App\Http\Controllers\LeaveCreditController;
+use App\Http\Controllers\DesignationDocumentController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\EmployeeController;
@@ -18,7 +20,34 @@ Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, '
 // Protected routes (require authentication)
 Route::middleware(['auth'])->group(function () {
     // Dashboard
-    Route::get('/dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/leave-balances', [DashboardController::class, 'leaveBalances'])->name('dashboard.leave-balances');
+    Route::get('/leave-history', [DashboardController::class, 'leaveHistory'])->name('dashboard.leave-history');
+    
+    // Designation Documents
+    Route::prefix('designation-documents')->group(function () {
+        Route::get('/', [DesignationDocumentController::class, 'index'])->name('designation-documents.index');
+        Route::get('/create', [DesignationDocumentController::class, 'create'])->name('designation-documents.create');
+        Route::post('/', [DesignationDocumentController::class, 'store'])->name('designation-documents.store');
+        Route::get('/{designationDocument}', [DesignationDocumentController::class, 'show'])->name('designation-documents.show');
+        Route::get('/{designationDocument}/edit', [DesignationDocumentController::class, 'edit'])->name('designation-documents.edit');
+        Route::put('/{designationDocument}', [DesignationDocumentController::class, 'update'])->name('designation-documents.update');
+        Route::delete('/{designationDocument}', [DesignationDocumentController::class, 'destroy'])->name('designation-documents.destroy');
+        Route::get('/{designationDocument}/download', [DesignationDocumentController::class, 'download'])->name('designation-documents.download');
+        
+        // HR/Admin routes
+        Route::middleware(['auth'])->group(function () {
+            Route::post('/{designationDocument}/approve', [DesignationDocumentController::class, 'approve'])->name('designation-documents.approve');
+            Route::post('/{designationDocument}/reject', [DesignationDocumentController::class, 'reject'])->name('designation-documents.reject');
+        });
+    });
+    
+    // HR Routes (prefix with hr for clarity)
+    Route::prefix('hr')->middleware(['auth'])->group(function () {
+        Route::get('/designation-documents', [DesignationDocumentController::class, 'index'])->name('hr.designation-documents.index');
+        Route::get('/leave-applications', [LeaveApplicationController::class, 'adminIndex'])->name('hr.leave-applications.index');
+        Route::get('/employees', [EmployeeController::class, 'index'])->name('hr.employees.index');
+    });
     
     // Leave Applications
     Route::get('/leave-applications', [LeaveApplicationController::class, 'index'])->name('leave-applications.index');
@@ -30,47 +59,28 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/leave-applications/{leaveApplication}', [LeaveApplicationController::class, 'destroy'])->name('leave-applications.destroy');
     
     // Leave Credits (HR/Admin only)
-    Route::prefix('leave-credits')->group(function () {
+    Route::prefix('leave-credits')->middleware(['auth'])->group(function () {
         Route::get('/', [LeaveCreditController::class, 'index'])->name('leave-credits.index');
         Route::get('/create', [LeaveCreditController::class, 'create'])->name('leave-credits.create');
         Route::post('/', [LeaveCreditController::class, 'store'])->name('leave-credits.store');
         Route::post('/update-balance/{userId}/{leaveTypeId}', [LeaveCreditController::class, 'updateLeaveBalance'])->name('leave-credits.update-balance');
     });
     
-    // Attendance (HR/Admin only for management, Employee for viewing)
-    Route::prefix('attendance')->group(function () {
-        Route::get('/', [AttendanceController::class, 'index'])->name('attendance.index');
-        Route::get('/current-status', [AttendanceController::class, 'currentStatus'])->name('attendance.current-status');
-        
-        // Management routes (HR/Admin only)
-        Route::group([], function () {
-            Route::post('/', [AttendanceController::class, 'store'])->name('attendance.store');
-            Route::post('/time-in', [AttendanceController::class, 'timeIn'])->name('attendance.time-in');
-            Route::post('/time-out', [AttendanceController::class, 'timeOut'])->name('attendance.time-out');
-        });
+    // Reports (HR/Admin only)
+    Route::prefix('reports')->middleware(['auth'])->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('reports.index');
+        Route::get('/reports/leave-summary', [ReportController::class, 'leaveSummary'])->name('reports.leave-summary');
+        Route::get('/reports/attendance-report', [ReportController::class, 'attendanceReport'])->name('reports.attendance-report');
+        Route::get('/reports/leave-credits', [ReportController::class, 'leaveCreditsReport'])->name('reports.leave-credits');
     });
     
-    // Reports (HR/Admin only)
-    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-    Route::get('/reports/leave-summary', [ReportController::class, 'leaveSummary'])->name('reports.leave-summary');
-    Route::get('/reports/attendance-report', [ReportController::class, 'attendanceReport'])->name('reports.attendance-report');
-    Route::get('/reports/leave-credits', [ReportController::class, 'leaveCreditsReport'])->name('reports.leave-credits');
-    
-    // API Routes
-    Route::get('/api/employees', function () {
-        $user = Auth::user();
-        if (!$user->hasRole('admin') && !$user->hasRole('hr')) {
-            abort(403, 'Unauthorized action.');
-        }
-        
-        return User::where('is_active', true)
-            ->orderBy('last_name')
-            ->orderBy('first_name')
-            ->get(['id', 'first_name', 'last_name', 'full_name']);
+    // Attendance routes
+    Route::prefix('attendance')->middleware(['auth'])->group(function () {
+        Route::get('/', [AttendanceController::class, 'index'])->name('attendance.index');
     });
     
     // Admin Routes (Admin only)
-    Route::prefix('employees')->group(function () {
+    Route::prefix('employees')->middleware(['auth'])->group(function () {
         Route::get('/', [EmployeeController::class, 'index'])->name('employees.index');
         Route::get('/create', [EmployeeController::class, 'create'])->name('employees.create');
         Route::post('/', [EmployeeController::class, 'store'])->name('employees.store');
@@ -81,7 +91,7 @@ Route::middleware(['auth'])->group(function () {
     });
     
     // Admin Routes (for HR and administrators)
-    Route::prefix('admin')->group(function () {
+    Route::prefix('admin')->middleware(['auth'])->group(function () {
         Route::get('/leave-applications', [LeaveApplicationController::class, 'adminIndex'])->name('admin.leave-applications.index');
         Route::post('/leave-applications/{leaveApplication}/approve', [LeaveApplicationController::class, 'approve'])->name('admin.leave-applications.approve');
         Route::post('/leave-applications/{leaveApplication}/reject', [LeaveApplicationController::class, 'reject'])->name('admin.leave-applications.reject');

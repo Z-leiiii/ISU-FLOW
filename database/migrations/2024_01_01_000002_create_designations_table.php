@@ -6,27 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('departments', function (Blueprint $table) {
+        Schema::create('designations', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
+            $table->string('title');
             $table->string('code')->unique();
             $table->text('description')->nullable();
-            $table->string('head_of_department')->nullable();
+            $table->boolean('earns_vacation_leave')->default(true);
+            $table->boolean('earns_sick_leave')->default(true);
+            $table->decimal('vacation_leave_rate', 5, 2)->default(1.25); // days per month
+            $table->decimal('sick_leave_rate', 5, 2)->default(1.25); // days per month
             $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('departments');
+        Schema::dropIfExists('designations');
     }
 };

@@ -7,9 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\LeaveApplication;
 use App\Models\LeaveType;
 use App\Models\LeaveCredit;
-use App\Models\LeaveApproval;
 use App\Models\Notification;
-use App\Models\AuditLog;
 use Carbon\Carbon;
 
 class LeaveApplicationController extends Controller
@@ -23,16 +21,18 @@ class LeaveApplicationController extends Controller
         
         // Prevent HR and Admin from accessing their own leave applications page
         if ($user->hasRole('hr') || $user->hasRole('admin')) {
-            return redirect()->route('admin.leave-applications.index')
-                ->with('info', 'Redirected to Employee Applications dashboard.');
+            return redirect()->route('hr.leave-applications.index')
+                ->with('info', 'Redirected to HR Applications dashboard.');
         }
         
         $applications = LeaveApplication::where('user_id', $user->id)
-            ->with(['user', 'leaveType', 'approvals.approver'])
+            ->with(['user', 'leaveType', 'recommendedBy', 'approvedBy', 'disapprovedBy'])
             ->orderBy('created_at', 'desc')
             ->paginate(10);
 
-        return view('leave-applications.index', compact('applications'));
+        $leaveTypes = LeaveType::orderBy('name')->get();
+
+        return view('leave-applications.index', compact('applications', 'leaveTypes'));
     }
 
     /**
@@ -50,13 +50,18 @@ class LeaveApplicationController extends Controller
         
         $leaveTypes = LeaveType::where('is_active', true)->get();
         
-        // Get user's leave credits
-        $leaveCredits = $user->leaveCredits()
+        // Get user's current leave balances
+        $leaveBalances = LeaveCredit::where('user_id', $user->id)
             ->with('leaveType')
-            ->where('year', now()->year)
+            ->where('as_of_date', function($query) {
+                $query->selectRaw('MAX(as_of_date)')
+                    ->from('leave_credits')
+                    ->whereColumn('user_id', 'leave_credits.user_id')
+                    ->whereColumn('leave_type_id', 'leave_credits.leave_type_id');
+            })
             ->get();
 
-        return view('leave-applications.create', compact('leaveTypes', 'leaveCredits'));
+        return view('leave-applications.create', compact('leaveTypes', 'leaveBalances'));
     }
 
     /**
@@ -80,61 +85,104 @@ class LeaveApplicationController extends Controller
             'attachment' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
         ]);
 
-        $user = Auth::user();
         $leaveType = LeaveType::findOrFail($request->leave_type_id);
         
         // Calculate total days
         $startDate = Carbon::parse($request->start_date);
         $endDate = Carbon::parse($request->end_date);
-        $totalDays = $startDate->diffInDays($endDate) + 1;
+        $numberOfDays = $startDate->diffInDaysFiltered(function ($date) {
+            return !$date->isWeekend();
+        }, $endDate) + 1;
 
-        // Check if user has enough leave credits
-        $leaveCredit = $user->leaveCredits()
+        // Check leave balance
+        $leaveBalance = LeaveCredit::where('user_id', $user->id)
             ->where('leave_type_id', $request->leave_type_id)
-            ->where('year', now()->year)
+            ->where('as_of_date', function($query) {
+                $query->selectRaw('MAX(as_of_date)')
+                    ->from('leave_credits')
+                    ->whereColumn('user_id', 'leave_credits.user_id')
+                    ->whereColumn('leave_type_id', 'leave_credits.leave_type_id');
+            })
             ->first();
 
-        if (!$leaveCredit || $leaveCredit->credits_balance < $totalDays) {
-            return back()->with('error', 'Insufficient leave credits for this application.');
+        $isWithoutPay = false;
+        $warningMessage = '';
+
+        // Check if leave should be without pay
+        if (!$leaveType->is_paid) {
+            $isWithoutPay = true;
+        } elseif (!$leaveBalance || $leaveBalance->balance < $numberOfDays) {
+            $isWithoutPay = true;
+            $warningMessage = "You have insufficient {$leaveType->name} balance. This application will be marked as leave without pay.";
         }
 
         // Handle file upload
-        $attachmentPath = null;
+        $documentPath = null;
         if ($request->hasFile('attachment')) {
-            $attachmentPath = $request->file('attachment')->store('leave-attachments', 'public');
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $documentPath = $file->storeAs('leave-documents', $fileName, 'public');
         }
+
+        // Generate application number
+        $applicationNumber = 'LA-' . date('Y') . '-' . str_pad(LeaveApplication::count() + 1, 6, '0', STR_PAD_LEFT);
 
         // Create leave application
         $application = LeaveApplication::create([
             'user_id' => $user->id,
             'leave_type_id' => $request->leave_type_id,
+            'application_number' => $applicationNumber,
+            'date_filed' => now(),
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'total_days' => $totalDays,
+            'number_of_days' => $numberOfDays,
             'reason' => $request->reason,
-            'attachment_path' => $attachmentPath,
             'status' => 'pending',
+            'is_without_pay' => $isWithoutPay,
+            'document_path' => $documentPath,
         ]);
 
-        // Create approval workflow
-        $this->createApprovalWorkflow($application);
+        // Create notifications
+        $hrUsers = User::role('hr')->get();
+        foreach ($hrUsers as $hr) {
+            Notification::create([
+                'user_id' => $hr->id,
+                'title' => 'New Leave Application',
+                'message' => "{$user->full_name} has filed a {$leaveType->name} application.",
+                'type' => 'leave_application',
+                'data' => [
+                    'application_id' => $application->id,
+                    'user_id' => $user->id,
+                ],
+            ]);
+        }
 
-        // Create notification for HR approvers
-        $this->createHRNotification($application);
+        // Notify department head if applicable
+        if ($user->department) {
+            $departmentHead = User::where('department_id', $user->department_id)
+                ->whereHas('roles', function($query) {
+                    $query->where('name', 'department_head');
+                })
+                ->first();
 
-        // Log the action
-        AuditLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'create',
-            'module' => 'leave_application',
-            'description' => "Leave application #{$application->id} created and forwarded to HR",
-            'new_values' => $application->toArray(),
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-        ]);
+            if ($departmentHead) {
+                Notification::create([
+                    'user_id' => $departmentHead->id,
+                    'title' => 'New Leave Application',
+                    'message' => "{$user->full_name} has filed a {$leaveType->name} application.",
+                    'type' => 'leave_application',
+                    'data' => [
+                        'application_id' => $application->id,
+                        'user_id' => $user->id,
+                    ],
+                ]);
+            }
+        }
 
-        return redirect()->route('leave-applications.index')
-            ->with('success', 'Leave application submitted successfully and forwarded to HR for approval.');
+        $message = $warningMessage ? $warningMessage : 'Leave application submitted successfully.';
+        
+        return redirect()->route('leave-applications.show', $application)
+            ->with('success', $message);
     }
 
     /**
@@ -144,7 +192,7 @@ class LeaveApplicationController extends Controller
     {
         $this->authorize('view', $leaveApplication);
         
-        $leaveApplication->load(['user', 'leaveType', 'approvals.approver']);
+        $leaveApplication->load(['user', 'leaveType', 'recommendedBy', 'approvedBy', 'disapprovedBy']);
         
         return view('leave-applications.show', compact('leaveApplication'));
     }
@@ -183,34 +231,36 @@ class LeaveApplicationController extends Controller
             'reason' => 'required|string|min:10',
         ]);
 
-        $oldValues = $leaveApplication->toArray();
-        
         // Calculate total days
         $startDate = Carbon::parse($request->start_date);
         $endDate = Carbon::parse($request->end_date);
-        $totalDays = $startDate->diffInDays($endDate) + 1;
+        $numberOfDays = $startDate->diffInDaysFiltered(function ($date) {
+            return !$date->isWeekend();
+        }, $endDate) + 1;
+
+        // Handle file upload
+        if ($request->hasFile('attachment')) {
+            // Delete old file
+            if ($leaveApplication->document_path) {
+                Storage::disk('public')->delete($leaveApplication->document_path);
+            }
+            
+            $file = $request->file('attachment');
+            $fileName = time() . '_' . $file->getClientOriginalName();
+            $documentPath = $file->storeAs('leave-documents', $fileName, 'public');
+            
+            $leaveApplication->document_path = $documentPath;
+        }
 
         $leaveApplication->update([
             'leave_type_id' => $request->leave_type_id,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
-            'total_days' => $totalDays,
+            'number_of_days' => $numberOfDays,
             'reason' => $request->reason,
         ]);
 
-        // Log the action
-        AuditLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'update',
-            'module' => 'leave_application',
-            'description' => "Leave application #{$leaveApplication->id} updated",
-            'old_values' => $oldValues,
-            'new_values' => $leaveApplication->toArray(),
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent(),
-        ]);
-
-        return redirect()->route('leave-applications.index')
+        return redirect()->route('leave-applications.show', $leaveApplication)
             ->with('success', 'Leave application updated successfully.');
     }
 
@@ -222,210 +272,105 @@ class LeaveApplicationController extends Controller
         $this->authorize('delete', $leaveApplication);
         
         if ($leaveApplication->status !== 'pending') {
-            return back()->with('error', 'Cannot cancel application that is already processed.');
+            return back()->with('error', 'Cannot delete application that is already processed.');
         }
 
-        $oldValues = $leaveApplication->toArray();
+        // Delete file if exists
+        if ($leaveApplication->document_path) {
+            Storage::disk('public')->delete($leaveApplication->document_path);
+        }
         
-        $leaveApplication->update(['status' => 'cancelled']);
-
-        // Log the action
-        AuditLog::create([
-            'user_id' => Auth::id(),
-            'action' => 'cancel',
-            'module' => 'leave_application',
-            'description' => "Leave application #{$leaveApplication->id} cancelled",
-            'old_values' => $oldValues,
-            'ip_address' => request()->ip(),
-            'user_agent' => request()->userAgent(),
-        ]);
+        $leaveApplication->delete();
 
         return redirect()->route('leave-applications.index')
-            ->with('success', 'Leave application cancelled successfully.');
+            ->with('success', 'Leave application deleted successfully.');
     }
 
     /**
-     * Display leave applications for HR/Admin approval.
+     * Display admin index of all leave applications.
      */
     public function adminIndex()
     {
         $user = Auth::user();
         
-        // Check if user has HR or Admin role
         if (!$user->hasRole('admin') && !$user->hasRole('hr')) {
             abort(403, 'Unauthorized action.');
         }
-
-        $applications = LeaveApplication::with(['user.department', 'leaveType', 'approvals.approver'])
+        
+        $applications = LeaveApplication::with(['user', 'leaveType'])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
-
-        return view('leave-applications.admin-index', compact('applications'));
+        
+        $leaveTypes = LeaveType::orderBy('name')->get();
+        
+        return view('leave-applications.admin-index', compact('applications', 'leaveTypes'));
     }
 
     /**
-     * Approve a leave application (HR/Admin only).
+     * Approve a leave application.
      */
     public function approve(Request $request, LeaveApplication $leaveApplication)
     {
-        $user = Auth::user();
+        $this->authorize('approve', $leaveApplication);
         
-        // Check if user has HR or Admin role
-        if (!$user->hasRole('admin') && !$user->hasRole('hr')) {
-            abort(403, 'Unauthorized action.');
-        }
-
         if ($leaveApplication->status !== 'pending') {
-            return back()->with('error', 'This application has already been processed.');
+            return back()->with('error', 'Application has already been processed.');
         }
-
-        // Check leave balance
-        $leaveBalance = LeaveBalance::where('user_id', $leaveApplication->user_id)
-            ->where('leave_type_id', $leaveApplication->leave_type_id)
-            ->where('year', now()->year)
-            ->first();
-
-        if (!$leaveBalance || $leaveBalance->current_balance < $leaveApplication->total_days) {
-            return back()->with('error', 'Insufficient leave balance for this application.');
-        }
-
-        // Update application status
+        
         $leaveApplication->update([
             'status' => 'approved',
             'approved_at' => now(),
-            'approved_by' => $user->id,
-            'remarks' => $request->remarks ?? 'Approved by ' . $user->full_name,
+            'approved_by' => Auth::id(),
+            'hr_remarks' => $request->hr_remarks,
         ]);
-
-        // Update leave balance
-        if ($leaveBalance) {
-            $leaveBalance->total_used += $leaveApplication->total_days;
-            $leaveBalance->current_balance -= $leaveApplication->total_days;
-            $leaveBalance->save();
-        }
-
-        // Create approval record
-        LeaveApproval::create([
-            'leave_application_id' => $leaveApplication->id,
-            'approver_id' => $user->id,
-            'level' => 'hr',
-            'status' => 'approved',
-            'remarks' => $request->remarks,
-            'approved_at' => now(),
-        ]);
-
-        // Create notification for employee
+        
+        // Create notification for user
         Notification::create([
             'user_id' => $leaveApplication->user_id,
             'title' => 'Leave Application Approved',
-            'message' => "Your leave application from {$leaveApplication->start_date->format('M d, Y')} to {$leaveApplication->end_date->format('M d, Y')} has been approved.",
-            'type' => 'success',
+            'message' => 'Your leave application has been approved.',
+            'type' => 'leave_approval',
+            'data' => [
+                'application_id' => $leaveApplication->id,
+            ],
         ]);
-
-        // Log the action
-        AuditLog::create([
-            'user_id' => $user->id,
-            'action' => 'approve',
-            'module' => 'leave_application',
-            'description' => "Leave application #{$leaveApplication->id} approved for {$leaveApplication->user->full_name}",
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-        ]);
-
-        return redirect()->route('admin.leave-applications.index')
-            ->with('success', "Leave application approved successfully for {$leaveApplication->user->full_name}.");
+        
+        return back()->with('success', 'Leave application approved successfully.');
     }
 
     /**
-     * Reject a leave application (HR/Admin only).
+     * Reject a leave application.
      */
     public function reject(Request $request, LeaveApplication $leaveApplication)
     {
-        $user = Auth::user();
+        $this->authorize('approve', $leaveApplication);
         
-        // Check if user has HR or Admin role
-        if (!$user->hasRole('admin') && !$user->hasRole('hr')) {
-            abort(403, 'Unauthorized action.');
-        }
-
         if ($leaveApplication->status !== 'pending') {
-            return back()->with('error', 'This application has already been processed.');
+            return back()->with('error', 'Application has already been processed.');
         }
-
-        // Update application status
+        
+        $request->validate([
+            'hr_remarks' => 'required|string|max:500',
+        ]);
+        
         $leaveApplication->update([
-            'status' => 'rejected',
-            'rejected_at' => now(),
-            'rejected_by' => $user->id,
-            'remarks' => $request->remarks ?? 'Rejected by ' . $user->full_name,
+            'status' => 'disapproved',
+            'disapproved_at' => now(),
+            'disapproved_by' => Auth::id(),
+            'hr_remarks' => $request->hr_remarks,
         ]);
-
-        // Create approval record
-        LeaveApproval::create([
-            'leave_application_id' => $leaveApplication->id,
-            'approver_id' => $user->id,
-            'level' => 'hr',
-            'status' => 'rejected',
-            'remarks' => $request->remarks,
-            'rejected_at' => now(),
-        ]);
-
-        // Create notification for employee
+        
+        // Create notification for user
         Notification::create([
             'user_id' => $leaveApplication->user_id,
-            'title' => 'Leave Application Rejected',
-            'message' => "Your leave application from {$leaveApplication->start_date->format('M d, Y')} to {$leaveApplication->end_date->format('M d, Y')} has been rejected. Reason: " . ($request->remarks ?? 'No reason provided'),
-            'type' => 'error',
+            'title' => 'Leave Application Disapproved',
+            'message' => 'Your leave application has been disapproved.',
+            'type' => 'leave_approval',
+            'data' => [
+                'application_id' => $leaveApplication->id,
+            ],
         ]);
-
-        // Log the action
-        AuditLog::create([
-            'user_id' => $user->id,
-            'action' => 'reject',
-            'module' => 'leave_application',
-            'description' => "Leave application #{$leaveApplication->id} rejected for {$leaveApplication->user->full_name}",
-            'ip_address' => $request->ip(),
-            'user_agent' => $request->userAgent(),
-        ]);
-
-        return redirect()->route('admin.leave-applications.index')
-            ->with('success', "Leave application rejected successfully for {$leaveApplication->user->full_name}.");
-    }
-
-    /**
-     * Create notification for HR approvers
-     */
-    private function createHRNotification(LeaveApplication $application)
-    {
-        // Get all HR users
-        $hrUsers = User::role('hr')->get();
         
-        foreach ($hrUsers as $hrUser) {
-            Notification::create([
-                'user_id' => $hrUser->id,
-                'title' => 'New Leave Application',
-                'message' => "New leave application from {$application->user->full_name} for {$application->leaveType->name} ({$application->total_days} days) requires your review.",
-                'type' => 'info',
-                'module' => 'leave_application',
-                'module_id' => $application->id,
-            ]);
-        }
-    }
-
-    /**
-     * Create notification for approvers
-     */
-    private function createNotification(LeaveApplication $application)
-    {
-        $approvers = [$application->user->department->head_of_department ?? 1];
-        
-        foreach ($approvers as $approverId) {
-            Notification::create([
-                'user_id' => $approverId,
-                'title' => 'New Leave Application',
-                'message' => "Leave application submitted for {$application->user->full_name}",
-                'type' => 'info',
-            ]);
-        }
+        return back()->with('success', 'Leave application disapproved successfully.');
     }
 }

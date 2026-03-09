@@ -1,232 +1,290 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISU-Flow - New Leave Application</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-    <!-- Navigation -->
-    <nav class="bg-green-600">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex items-center justify-between h-16">
-                <div class="flex items-center">
-                    <div class="flex-shrink-0">
-                        <h1 class="text-white text-xl font-bold">ISU-Flow</h1>
-                    </div>
-                    <div class="hidden md:block">
-                        <div class="ml-10 flex items-baseline space-x-4">
-                            <a href="{{ route('dashboard') }}" class="text-green-200 hover:bg-green-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Dashboard</a>
-                            <a href="{{ route('leave-applications.index') }}" class="bg-green-700 text-white px-3 py-2 rounded-md text-sm font-medium">Leave Applications</a>
-                            @if(Auth::user()->hasAnyRole(['admin', 'hr']))
-                                <a href="{{ route('leave-credits.index') }}" class="text-green-200 hover:bg-green-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Leave Credits</a>
-                            @endif
-                            <a href="{{ route('attendance.index') }}" class="text-green-200 hover:bg-green-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Attendance</a>
-                            @if(Auth::user()->hasAnyRole(['admin', 'hr']))
-                                <a href="{{ route('reports.index') }}" class="text-green-200 hover:bg-green-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Reports</a>
-                            @endif
-                            @if(Auth::user()->hasRole('admin'))
-                                <a href="{{ route('employees.index') }}" class="text-green-200 hover:bg-green-500 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Employees</a>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-                <div class="flex items-center">
-                    <div class="ml-3 relative">
-                        <div class="flex items-center text-white">
-                            <span class="mr-2">{{ Auth::user()->full_name }}</span>
-                            <span class="text-sm text-green-200">{{ Auth::user()->position }}</span>
-                        </div>
-                        <form action="{{ route('logout') }}" method="POST" class="inline">
-                            @csrf
-                            <button type="submit" class="ml-4 text-green-200 hover:text-white text-sm">Logout</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
+@extends('layouts.app')
 
-    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        <!-- Page Header -->
-        <div class="px-4 py-6 sm:px-0">
-            <div class="flex items-center">
-                <a href="{{ route('leave-applications.index') }}" class="text-blue-600 hover:text-blue-900 mr-3">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </a>
-                <h1 class="text-3xl font-bold text-gray-900">New Leave Application</h1>
-            </div>
-            <p class="mt-2 text-gray-600">Submit a new leave application</p>
-        </div>
+@section('title', 'Apply for Leave')
 
-        <!-- Leave Credits Summary -->
-        <div class="px-4 py-6 sm:px-0">
-            <div class="bg-white shadow rounded-lg">
-                <div class="px-4 py-5 sm:p-6">
-                    <h3 class="text-lg leading-6 font-medium text-gray-900 mb-4">Your Leave Credits</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        @forelse ($leaveCredits as $credit)
-                            <div class="border rounded-lg p-4">
-                                <div class="flex justify-between items-center">
-                                    <div>
-                                        <h4 class="font-medium text-gray-900">{{ $credit->leaveType->name }}</h4>
-                                        <p class="text-sm text-gray-500">{{ $credit->leaveType->code }}</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-lg font-semibold text-blue-600">{{ number_format($credit->credits_balance, 2) }}</p>
-                                        <p class="text-xs text-gray-500">days available</p>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="col-span-full text-center py-4">
-                                <p class="text-gray-500">No leave credits available</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
-        </div>
+@section('content')
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-plus"></i> Apply for Leave</h1>
+    <a href="{{ route('leave-applications.index') }}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Applications
+    </a>
+</div>
 
-        <!-- Application Form -->
-        <div class="px-4 py-6 sm:px-0">
-            <div class="bg-white shadow rounded-lg">
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-file-alt"></i> Leave Application Form</h5>
+            </div>
+            <div class="card-body">
                 <form action="{{ route('leave-applications.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-                    <div class="px-4 py-5 sm:p-6">
-                        <div class="grid grid-cols-1 gap-6">
-                            <!-- Leave Type -->
-                            <div>
-                                <label for="leave_type_id" class="block text-sm font-medium text-gray-700">Leave Type</label>
-                                <select id="leave_type_id" name="leave_type_id" required class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-                                    <option value="">Select a leave type</option>
-                                    @foreach ($leaveTypes as $type)
-                                        <option value="{{ $type->id }}" {{ old('leave_type_id') == $type->id ? 'selected' : '' }}>
-                                            {{ $type->name }} ({{ $type->code }})
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('leave_type_id')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
+                    
+                    <div class="mb-3">
+                        <label for="leave_type_id" class="form-label">Leave Type <span class="text-danger">*</span></label>
+                        <select class="form-select" id="leave_type_id" name="leave_type_id" required>
+                            <option value="">Select leave type</option>
+                            @foreach($leaveTypes as $leaveType)
+                                <option value="{{ $leaveType->id }}" 
+                                        data-requires-doc="{{ $leaveType->requires_documentation ? 'true' : 'false' }}"
+                                        data-is-paid="{{ $leaveType->is_paid ? 'true' : 'false' }}"
+                                        data-max-days="{{ $leaveType->max_days_per_year ?? 'unlimited' }}">
+                                    {{ $leaveType->name }}
+                                    @if(!$leaveType->is_paid)
+                                        (Without Pay)
+                                    @endif
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="form-text">Select the type of leave you are applying for</div>
+                    </div>
 
-                            <!-- Date Range -->
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
-                                    <input type="date" id="start_date" name="start_date" required min="{{ now()->format('Y-m-d') }}" value="{{ old('start_date') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                    @error('start_date')
-                                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
-                                <div>
-                                    <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
-                                    <input type="date" id="end_date" name="end_date" required min="{{ now()->format('Y-m-d') }}" value="{{ old('end_date') }}" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                                    @error('end_date')
-                                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
-                                </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="start_date" class="form-label">Start Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="start_date" name="start_date" 
+                                       min="{{ date('Y-m-d') }}" required>
                             </div>
-
-                            <!-- Total Days Display -->
-                            <div>
-                                <div class="bg-blue-50 border border-blue-200 rounded-md p-4">
-                                    <div class="flex">
-                                        <div class="flex-shrink-0">
-                                            <svg class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor">
-                                                <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
-                                            </svg>
-                                        </div>
-                                        <div class="ml-3">
-                                            <p class="text-sm text-blue-800">
-                                                <span id="total-days-display">0</span> days will be deducted from your leave credits.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Reason -->
-                            <div>
-                                <label for="reason" class="block text-sm font-medium text-gray-700">Reason for Leave</label>
-                                <textarea id="reason" name="reason" rows="4" required class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Please provide a detailed reason for your leave application...">{{ old('reason') }}</textarea>
-                                @error('reason')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- Attachment -->
-                            <div>
-                                <label for="attachment" class="block text-sm font-medium text-gray-700">Attachment (Optional)</label>
-                                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-gray-400 transition-colors">
-                                    <div class="space-y-1 text-center">
-                                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                        <div class="flex text-sm text-gray-600">
-                                            <label for="attachment" class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                                <span>Upload a file</span>
-                                                <input id="attachment" name="attachment" type="file" class="sr-only" accept=".pdf,.doc,.docx">
-                                            </label>
-                                            <p class="pl-1">or drag and drop</p>
-                                        </div>
-                                        <p class="text-xs text-gray-500">PDF, DOC, DOCX up to 2MB</p>
-                                    </div>
-                                </div>
-                                @error('attachment')
-                                    <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="end_date" class="form-label">End Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="end_date" name="end_date" 
+                                       min="{{ date('Y-m-d') }}" required>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Form Actions -->
-                    <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
-                        <a href="{{ route('leave-applications.index') }}" class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            Cancel
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Reason <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="reason" name="reason" rows="4" required
+                                  placeholder="Please provide a detailed reason for your leave application..."></textarea>
+                        <div class="form-text">Minimum 10 characters</div>
+                    </div>
+
+                    <div class="mb-3" id="document-upload-section" style="display: none;">
+                        <label for="attachment" class="form-label">Supporting Document <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" id="attachment" name="attachment" 
+                               accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                        <div class="form-text">
+                            Accepted formats: PDF, DOC, DOCX, JPG, JPEG, PNG (Max: 2MB)<br>
+                            This leave type requires supporting documentation
+                        </div>
+                    </div>
+
+                    <!-- Leave Balance Check -->
+                    <div class="alert alert-info" id="balance-check" style="display: none;">
+                        <h6><i class="fas fa-info-circle"></i> Leave Balance Information</h6>
+                        <div id="balance-details">
+                            <!-- Balance details will be populated here -->
+                        </div>
+                    </div>
+
+                    <!-- Leave Without Pay Warning -->
+                    <div class="alert alert-warning" id="lwop-warning" style="display: none;">
+                        <h6><i class="fas fa-exclamation-triangle"></i> Leave Without Pay Notice</h6>
+                        <p class="mb-0" id="lwop-message">
+                            This application will be marked as leave without pay due to insufficient balance.
+                        </p>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ route('leave-applications.index') }}" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
                         </a>
-                        <button type="submit" class="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                            Submit Application
+                        <button type="submit" class="btn btn-primary" id="submit-btn">
+                            <i class="fas fa-paper-plane"></i> Submit Application
                         </button>
                     </div>
                 </form>
             </div>
         </div>
-    </main>
+    </div>
 
-    <script>
-        // Calculate total days when dates change
-        document.getElementById('start_date').addEventListener('change', calculateTotalDays);
-        document.getElementById('end_date').addEventListener('change', calculateTotalDays);
+    <div class="col-md-4">
+        <!-- Leave Balances -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-balance-scale"></i> Your Leave Balances</h5>
+            </div>
+            <div class="card-body">
+                @if($leaveBalances->count() > 0)
+                    @foreach($leaveBalances as $balance)
+                        <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-2">
+                            <div>
+                                <strong>{{ $balance->leaveType->name }}</strong><br>
+                                <small class="text-muted">Available: {{ number_format($balance->balance, 1) }} days</small>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge {{ $balance->balance <= 1 ? 'bg-danger' : ($balance->balance <= 3 ? 'bg-warning' : 'bg-success') }}">
+                                    {{ number_format($balance->balance, 1) }}
+                                </span>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <p class="text-muted text-center">
+                        <i class="fas fa-info-circle"></i> No leave balances available.<br>
+                        <small>Upload your designation document to start earning leave credits.</small>
+                    </p>
+                    <div class="text-center">
+                        <a href="{{ route('designation-documents.create') }}" class="btn btn-sm btn-primary">
+                            Upload Designation
+                        </a>
+                    </div>
+                @endif
+            </div>
+        </div>
 
-        function calculateTotalDays() {
-            const startDate = new Date(document.getElementById('start_date').value);
-            const endDate = new Date(document.getElementById('end_date').value);
-            
-            if (startDate && endDate && startDate <= endDate) {
-                const diffTime = Math.abs(endDate - startDate);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
-                document.getElementById('total-days-display').textContent = diffDays;
-            } else {
-                document.getElementById('total-days-display').textContent = '0';
-            }
+        <!-- Application Guidelines -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle"></i> Application Guidelines</h5>
+            </div>
+            <div class="card-body">
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success"></i>
+                        Apply at least 3 days in advance
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success"></i>
+                        Provide detailed reason for leave
+                    </li>
+                    <li class="mb-2">
+                        <i class="fas fa-check-circle text-success"></i>
+                        Upload required documents when needed
+                    </li>
+                    <li class="mb-0">
+                        <i class="fas fa-exclamation-triangle text-warning"></i>
+                        Insufficient balance = Leave without pay
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const leaveTypeSelect = document.getElementById('leave_type_id');
+    const startDateInput = document.getElementById('start_date');
+    const endDateInput = document.getElementById('end_date');
+    const documentSection = document.getElementById('document-upload-section');
+    const balanceCheck = document.getElementById('balance-check');
+    const balanceDetails = document.getElementById('balance-details');
+    const lwopWarning = document.getElementById('lwop-warning');
+    const lwopMessage = document.getElementById('lwop-message');
+    
+    const leaveBalances = @json($leaveBalances);
+
+    leaveTypeSelect.addEventListener('change', function() {
+        const selectedOption = this.options[this.selectedIndex];
+        const requiresDoc = selectedOption.dataset.requiresDoc === 'true';
+        const isPaid = selectedOption.dataset.isPaid === 'true';
+        
+        // Show/hide document upload section
+        documentSection.style.display = requiresDoc ? 'block' : 'none';
+        if (requiresDoc) {
+            document.querySelector('#attachment').setAttribute('required', 'required');
+        } else {
+            document.querySelector('#attachment').removeAttribute('required');
+        }
+        
+        // Update balance information
+        updateBalanceInfo();
+    });
+
+    startDateInput.addEventListener('change', calculateDays);
+    endDateInput.addEventListener('change', calculateDays);
+
+    function updateBalanceInfo() {
+        const leaveTypeId = leaveTypeSelect.value;
+        
+        if (!leaveTypeId) {
+            balanceCheck.style.display = 'none';
+            lwopWarning.style.display = 'none';
+            return;
         }
 
-        // Ensure end date is after start date
-        document.getElementById('start_date').addEventListener('change', function() {
-            const startDate = this.value;
-            const endDateInput = document.getElementById('end_date');
-            endDateInput.min = startDate;
-            
-            if (endDateInput.value && endDateInput.value < startDate) {
-                endDateInput.value = startDate;
+        const balance = leaveBalances.find(b => b.leave_type_id == leaveTypeId);
+        const leaveType = Array.from(leaveTypeSelect.options).find(opt => opt.value == leaveTypeId);
+        
+        if (balance) {
+            balanceDetails.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <strong>Total Earned:</strong> ${balance.total_earned} days
+                    </div>
+                    <div class="col-md-6">
+                        <strong>Total Used:</strong> ${balance.total_used} days
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-12">
+                        <strong>Current Balance:</strong> 
+                        <span class="badge ${balance.balance <= 1 ? 'bg-danger' : (balance.balance <= 3 ? 'bg-warning' : 'bg-success')}">
+                            ${balance.balance} days
+                        </span>
+                    </div>
+                </div>
+            `;
+            balanceCheck.style.display = 'block';
+        } else {
+            balanceDetails.innerHTML = `
+                <p class="text-muted">No balance information available for this leave type.</p>
+            `;
+            balanceCheck.style.display = 'block';
+        }
+        
+        calculateDays();
+    }
+
+    function calculateDays() {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+        const leaveTypeId = leaveTypeSelect.value;
+        
+        if (!startDate || !endDate || !leaveTypeId || startDate > endDate) {
+            lwopWarning.style.display = 'none';
+            return;
+        }
+
+        // Calculate working days (excluding weekends)
+        let workingDays = 0;
+        const currentDate = new Date(startDate);
+        
+        while (currentDate <= endDate) {
+            if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
+                workingDays++;
             }
-            calculateTotalDays();
-        });
-    </script>
-</body>
-</html>
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        const balance = leaveBalances.find(b => b.leave_type_id == leaveTypeId);
+        const leaveType = Array.from(leaveTypeSelect.options).find(opt => opt.value == leaveTypeId);
+        const isPaid = leaveType ? leaveType.dataset.isPaid === 'true' : true;
+        
+        if (!isPaid || !balance || balance.balance < workingDays) {
+            lwopWarning.style.display = 'block';
+            if (!balance) {
+                lwopMessage.textContent = `No balance available for ${leaveType.text}. This application will be marked as leave without pay.`;
+            } else {
+                lwopMessage.textContent = `You need ${workingDays} days but only have ${balance.balance} days available. This application will be marked as leave without pay.`;
+            }
+        } else {
+            lwopWarning.style.display = 'none';
+        }
+    }
+
+    // Set minimum date for end date when start date changes
+    startDateInput.addEventListener('change', function() {
+        endDateInput.min = this.value;
+        if (endDateInput.value && endDateInput.value < this.value) {
+            endDateInput.value = this.value;
+        }
+    });
+});
+</script>
+@endsection

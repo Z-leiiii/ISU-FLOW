@@ -16,13 +16,13 @@ class Notification extends Model
         'type',
         'is_read',
         'read_at',
-        'notifiable_type',
-        'notifiable_id',
+        'data',
     ];
 
     protected $casts = [
         'is_read' => 'boolean',
         'read_at' => 'datetime',
+        'data' => 'array',
     ];
 
     /**
@@ -31,14 +31,6 @@ class Notification extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Get the parent notifiable model.
-     */
-    public function notifiable()
-    {
-        return $this->morphTo();
     }
 
     /**
