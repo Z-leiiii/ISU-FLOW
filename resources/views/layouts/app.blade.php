@@ -15,7 +15,7 @@
         
         body {
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+            background: #ffffff;
             min-height: 100vh;
             color: #333;
         }
@@ -85,9 +85,9 @@
             top: 80px;
             bottom: 0;
             width: 280px;
-            background: rgba(255, 255, 255, 0.95);
+            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
             backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
             padding: 2rem 1rem;
             overflow-y: auto;
             z-index: 999;
@@ -101,7 +101,7 @@
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            color: #999;
+            color: rgba(255, 255, 255, 0.7);
             margin-bottom: 0.5rem;
             letter-spacing: 0.05em;
         }
@@ -111,7 +111,7 @@
             align-items: center;
             gap: 0.75rem;
             padding: 0.75rem 1rem;
-            color: #555;
+            color: rgba(255, 255, 255, 0.9);
             text-decoration: none;
             border-radius: 0.5rem;
             transition: all 0.2s ease;
@@ -119,13 +119,13 @@
         }
         
         .nav-link:hover {
-            background: rgba(4, 120, 87, 0.1);
-            color: #047857;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
             transform: translateX(4px);
         }
         
         .nav-link.active {
-            background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+            background: rgba(255, 255, 255, 0.2);
             color: white;
         }
         
@@ -142,6 +142,7 @@
             margin-left: 280px;
             margin-top: 80px;
             padding: 2rem;
+            background: #f8fafc;
             min-height: calc(100vh - 80px);
         }
         

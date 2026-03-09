@@ -10,6 +10,7 @@ use App\Models\LeaveCredit;
 use App\Models\LeaveType;
 use App\Models\DesignationDocument;
 use App\Models\Notification;
+use App\Services\LeaveCreditService;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -35,15 +36,17 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         
-        // Get leave balances
+        // Get leave balances with new computation
         $leaveBalances = LeaveCredit::where('user_id', $user->id)
             ->with('leaveType')
-            ->where('as_of_date', function($query) {
-                $query->selectRaw('MAX(as_of_date)')
-                    ->from('leave_credits')
-                    ->whereColumn('user_id', 'leave_credits.user_id')
-                    ->whereColumn('leave_type_id', 'leave_credits.leave_type_id');
-            })
+            ->get();
+
+        // Update leave credits using new computation
+        LeaveCreditService::updateUserAllLeaveCredits($user->id);
+        
+        // Get updated leave balances
+        $leaveBalances = LeaveCredit::where('user_id', $user->id)
+            ->with('leaveType')
             ->get();
 
         // Get recent leave applications

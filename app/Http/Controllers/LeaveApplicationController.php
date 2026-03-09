@@ -8,6 +8,8 @@ use App\Models\LeaveApplication;
 use App\Models\LeaveType;
 use App\Models\LeaveCredit;
 use App\Models\Notification;
+use App\Services\LeaveCreditService;
+use App\Services\EmailNotificationService;
 use Carbon\Carbon;
 
 class LeaveApplicationController extends Controller
@@ -94,16 +96,20 @@ class LeaveApplicationController extends Controller
             return !$date->isWeekend();
         }, $endDate) + 1;
 
-        // Check leave balance
-        $leaveBalance = LeaveCredit::where('user_id', $user->id)
-            ->where('leave_type_id', $request->leave_type_id)
-            ->where('as_of_date', function($query) {
-                $query->selectRaw('MAX(as_of_date)')
-                    ->from('leave_credits')
-                    ->whereColumn('user_id', 'leave_credits.user_id')
-                    ->whereColumn('leave_type_id', 'leave_credits.leave_type_id');
-            })
-            ->first();
+        // Check leave balance using new computation service
+        $validation = LeaveCreditService::validateLeaveBalance($user->id, $request->leave_type_id, $numberOfDays);
+        
+        if (!$validation['valid']) {
+            // Send insufficient balance email notification
+            EmailNotificationService::sendInsufficientBalanceNotification(
+                $user,
+                $leaveType,
+                $numberOfDays,
+                $validation['balance']
+            );
+            
+            return back()->with('error', $validation['message']);
+        }
 
         $isWithoutPay = false;
         $warningMessage = '';
@@ -111,7 +117,7 @@ class LeaveApplicationController extends Controller
         // Check if leave should be without pay
         if (!$leaveType->is_paid) {
             $isWithoutPay = true;
-        } elseif (!$leaveBalance || $leaveBalance->balance < $numberOfDays) {
+        } elseif ($validation['balance'] < $numberOfDays) {
             $isWithoutPay = true;
             $warningMessage = "You have insufficient {$leaveType->name} balance. This application will be marked as leave without pay.";
         }
@@ -142,7 +148,9 @@ class LeaveApplicationController extends Controller
             'document_path' => $documentPath,
         ]);
 
-        // Create notifications
+        // Create notifications and send emails
+        EmailNotificationService::sendNewApplicationNotification($leaveApplication);
+        
         $hrUsers = User::role('hr')->get();
         foreach ($hrUsers as $hr) {
             Notification::create([
@@ -324,7 +332,7 @@ class LeaveApplicationController extends Controller
             'hr_remarks' => $request->hr_remarks,
         ]);
         
-        // Create notification for user
+        // Create notification and send email
         Notification::create([
             'user_id' => $leaveApplication->user_id,
             'title' => 'Leave Application Approved',
@@ -334,6 +342,14 @@ class LeaveApplicationController extends Controller
                 'application_id' => $leaveApplication->id,
             ],
         ]);
+        
+        // Send email notification
+        EmailNotificationService::sendApplicationStatusNotification(
+            $leaveApplication,
+            'approved',
+            $request->hr_remarks,
+            Auth::user()
+        );
         
         return back()->with('success', 'Leave application approved successfully.');
     }
@@ -360,7 +376,7 @@ class LeaveApplicationController extends Controller
             'hr_remarks' => $request->hr_remarks,
         ]);
         
-        // Create notification for user
+        // Create notification and send email
         Notification::create([
             'user_id' => $leaveApplication->user_id,
             'title' => 'Leave Application Disapproved',
@@ -370,6 +386,14 @@ class LeaveApplicationController extends Controller
                 'application_id' => $leaveApplication->id,
             ],
         ]);
+        
+        // Send email notification
+        EmailNotificationService::sendApplicationStatusNotification(
+            $leaveApplication,
+            'rejected',
+            $request->hr_remarks,
+            Auth::user()
+        );
         
         return back()->with('success', 'Leave application disapproved successfully.');
     }
