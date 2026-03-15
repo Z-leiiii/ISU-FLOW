@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -10,13 +9,10 @@ use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * Mass assignable attributes
      */
     protected $fillable = [
         'employee_id',
@@ -35,9 +31,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
+     * Hidden attributes
      */
     protected $hidden = [
         'password',
@@ -45,9 +39,7 @@ class User extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * Attribute casting
      */
     protected function casts(): array
     {
@@ -61,7 +53,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the department that owns the user.
+     * Department relationship
      */
     public function department()
     {
@@ -69,7 +61,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the designation that owns the user.
+     * Designation relationship
      */
     public function designation()
     {
@@ -77,7 +69,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the leave credits for the user.
+     * Leave credits
      */
     public function leaveCredits()
     {
@@ -85,7 +77,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the leave applications for the user.
+     * Leave applications
      */
     public function leaveApplications()
     {
@@ -93,7 +85,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the designation documents for the user.
+     * Designation documents
      */
     public function designationDocuments()
     {
@@ -101,7 +93,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the notifications for the user.
+     * Notifications
      */
     public function notifications()
     {
@@ -109,7 +101,15 @@ class User extends Authenticatable
     }
 
     /**
-     * Get the full name of the user.
+     * Compensatory Time Off records
+     */
+    public function compensatoryTimeOffs()
+    {
+        return $this->hasMany(CompensatoryTimeOff::class);
+    }
+
+    /**
+     * Full name accessor
      */
     public function getFullNameAttribute()
     {

@@ -114,6 +114,11 @@
             font-weight: 600;
             margin-bottom: 8px;
         }
+        .processor-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #64748b;
+        }
         .footer {
             background: #f8fafc;
             padding: 20px 30px;
@@ -133,6 +138,16 @@
             border-radius: 6px;
             font-weight: 500;
             margin-top: 15px;
+        }
+        .btn-secondary {
+            background: #64748b;
+        }
+        .steps-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .center-text {
+            text-align: center;
         }
     </style>
 </head>
@@ -187,7 +202,7 @@
                     <div class="remarks-title">📝 Remarks</div>
                     <p>{{ $remarks }}</p>
                     @if($processedBy)
-                        <p style="margin-top: 10px; font-size: 14px; color: #64748b;">
+                        <p class="processor-info">
                             Processed by: {{ $processedBy->full_name }}
                         </p>
                     @endif
@@ -197,7 +212,7 @@
             @if($status == 'approved')
                 <div class="info-section">
                     <div class="info-title">✅ Next Steps</div>
-                    <ul style="margin: 0; padding-left: 20px;">
+                    <ul class="steps-list">
                         <li>Your leave has been approved and recorded</li>
                         <li>Please ensure your work responsibilities are covered</li>
                         <li>Submit any required documentation before your leave</li>
@@ -207,7 +222,7 @@
             @elseif($status == 'rejected')
                 <div class="info-section">
                     <div class="info-title">❌ What to Do Next</div>
-                    <ul style="margin: 0; padding-left: 20px;">
+                    <ul class="steps-list">
                         <li>Review the remarks for rejection reasons</li>
                         <li>Address any issues mentioned in the remarks</li>
                         <li>Submit a new application if needed</li>
@@ -216,7 +231,7 @@
                 </div>
             @endif
 
-            <div style="text-align: center;">
+            <div class="center-text">
                 <a href="{{ route('leave-applications.index') }}" class="btn">
                     View My Applications
                 </a>

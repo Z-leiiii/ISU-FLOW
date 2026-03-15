@@ -23,56 +23,24 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/register', [App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
 Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'register']);
 
-
 /*
 |--------------------------------------------------------------------------
-| Protected Routes
+| Protected Routes (Authenticated Users)
 |--------------------------------------------------------------------------
 */
 
 Route::middleware(['auth'])->group(function () {
-<<<<<<< C:/ISU-FLOW/systemF/routes/web.php
 
-    /*
-    |--------------------------------------------------------------------------
-    | Dashboard
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/leave-balances', [DashboardController::class, 'leaveBalances'])->name('dashboard.leave-balances');
-    Route::get('/leave-history', [DashboardController::class, 'leaveHistory'])->name('dashboard.leave-history');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Leave Applications
-    |--------------------------------------------------------------------------
-    */
-
-    Route::resource('leave-applications', LeaveApplicationController::class);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Designation Documents
-    |--------------------------------------------------------------------------
-    */
-
-    Route::prefix('designation-documents')->group(function () {
-
-=======
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/leave-balances', [DashboardController::class, 'leaveBalances'])->name('dashboard.leave-balances');
     Route::get('/leave-history', [DashboardController::class, 'leaveHistory'])->name('dashboard.leave-history');
-    
+
+    // Leave Applications
+    Route::resource('leave-applications', LeaveApplicationController::class);
+
     // Designation Documents
     Route::prefix('designation-documents')->group(function () {
-<<<<<<< C:/ISU-FLOW/systemF/routes/web.php
->>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/routes/web.php
-=======
->>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/routes/web.php
         Route::get('/', [DesignationDocumentController::class, 'index'])->name('designation-documents.index');
         Route::get('/create', [DesignationDocumentController::class, 'create'])->name('designation-documents.create');
         Route::post('/', [DesignationDocumentController::class, 'store'])->name('designation-documents.store');
@@ -81,145 +49,44 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/{designationDocument}', [DesignationDocumentController::class, 'update'])->name('designation-documents.update');
         Route::delete('/{designationDocument}', [DesignationDocumentController::class, 'destroy'])->name('designation-documents.destroy');
         Route::get('/{designationDocument}/download', [DesignationDocumentController::class, 'download'])->name('designation-documents.download');
-<<<<<<< C:/ISU-FLOW/systemF/routes/web.php
-<<<<<<< C:/ISU-FLOW/systemF/routes/web.php
 
+        // HR/Admin actions
         Route::middleware(['role:hr|admin'])->group(function () {
-
-            Route::post('/{designationDocument}/approve', [DesignationDocumentController::class, 'approve'])->name('designation-documents.approve');
-            Route::post('/{designationDocument}/reject', [DesignationDocumentController::class, 'reject'])->name('designation-documents.reject');
-
-        });
-
-    });
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Leave Credits (HR/Admin)
-    |--------------------------------------------------------------------------
-    */
-
-    Route::prefix('leave-credits')->middleware(['role:hr|admin'])->group(function () {
-
-=======
-=======
->>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/routes/web.php
-        
-        // HR/Admin routes
-        Route::middleware(['auth'])->group(function () {
             Route::post('/{designationDocument}/approve', [DesignationDocumentController::class, 'approve'])->name('designation-documents.approve');
             Route::post('/{designationDocument}/reject', [DesignationDocumentController::class, 'reject'])->name('designation-documents.reject');
         });
     });
-    
-    // HR Routes (prefix with hr for clarity)
-    Route::prefix('hr')->middleware(['auth'])->group(function () {
-        Route::get('/designation-documents', [DesignationDocumentController::class, 'index'])->name('hr.designation-documents.index');
-        Route::get('/leave-applications', [LeaveApplicationController::class, 'adminIndex'])->name('hr.leave-applications.index');
-        Route::get('/employees', [EmployeeController::class, 'index'])->name('hr.employees.index');
-    });
-    
-    // Leave Applications
-    Route::get('/leave-applications', [LeaveApplicationController::class, 'index'])->name('leave-applications.index');
-    Route::get('/leave-applications/create', [LeaveApplicationController::class, 'create'])->name('leave-applications.create');
-    Route::post('/leave-applications', [LeaveApplicationController::class, 'store'])->name('leave-applications.store');
-    Route::get('/leave-applications/{leaveApplication}', [LeaveApplicationController::class, 'show'])->name('leave-applications.show');
-    Route::get('/leave-applications/{leaveApplication}/edit', [LeaveApplicationController::class, 'edit'])->name('leave-applications.edit');
-    Route::put('/leave-applications/{leaveApplication}', [LeaveApplicationController::class, 'update'])->name('leave-applications.update');
-    Route::delete('/leave-applications/{leaveApplication}', [LeaveApplicationController::class, 'destroy'])->name('leave-applications.destroy');
-    
+
     // Leave Credits (HR/Admin only)
-    Route::prefix('leave-credits')->middleware(['auth'])->group(function () {
-<<<<<<< C:/ISU-FLOW/systemF/routes/web.php
->>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/routes/web.php
-=======
->>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/routes/web.php
+    Route::prefix('leave-credits')->middleware(['role:hr|admin'])->group(function () {
         Route::get('/', [LeaveCreditController::class, 'index'])->name('leave-credits.index');
         Route::get('/create', [LeaveCreditController::class, 'create'])->name('leave-credits.create');
         Route::post('/', [LeaveCreditController::class, 'store'])->name('leave-credits.store');
         Route::post('/update-balance/{userId}/{leaveTypeId}', [LeaveCreditController::class, 'updateLeaveBalance'])->name('leave-credits.update-balance');
-
     });
-<<<<<<< C:/ISU-FLOW/systemF/routes/web.php
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | HR Section
-    |--------------------------------------------------------------------------
-    */
-
+    // HR Routes
     Route::prefix('hr')->middleware(['role:hr|admin'])->group(function () {
-
         Route::get('/designation-documents', [DesignationDocumentController::class, 'index'])->name('hr.designation-documents.index');
         Route::get('/leave-applications', [LeaveApplicationController::class, 'adminIndex'])->name('hr.leave-applications.index');
         Route::get('/employees', [EmployeeController::class, 'index'])->name('hr.employees.index');
-
     });
-<<<<<<< C:/ISU-FLOW/systemF/routes/web.php
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Reports
-    |--------------------------------------------------------------------------
-    */
-
+    // Reports (HR/Admin only)
     Route::prefix('reports')->middleware(['role:hr|admin'])->group(function () {
-
         Route::get('/', [ReportController::class, 'index'])->name('reports.index');
         Route::get('/leave-summary', [ReportController::class, 'leaveSummary'])->name('reports.leave-summary');
         Route::get('/attendance-report', [ReportController::class, 'attendanceReport'])->name('reports.attendance-report');
         Route::get('/leave-credits', [ReportController::class, 'leaveCreditsReport'])->name('reports.leave-credits');
-
     });
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Attendance
-    |--------------------------------------------------------------------------
-    */
-
+    // Attendance
     Route::prefix('attendance')->group(function () {
-
         Route::get('/', [AttendanceController::class, 'index'])->name('attendance.index');
-
     });
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Employees (Admin)
-    |--------------------------------------------------------------------------
-    */
-
+    // Employees (Admin only)
     Route::prefix('employees')->middleware(['role:admin'])->group(function () {
-
-=======
-=======
->>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/routes/web.php
-    
-    // Reports (HR/Admin only)
-    Route::prefix('reports')->middleware(['auth'])->group(function () {
-        Route::get('/', [ReportController::class, 'index'])->name('reports.index');
-        Route::get('/reports/leave-summary', [ReportController::class, 'leaveSummary'])->name('reports.leave-summary');
-        Route::get('/reports/attendance-report', [ReportController::class, 'attendanceReport'])->name('reports.attendance-report');
-        Route::get('/reports/leave-credits', [ReportController::class, 'leaveCreditsReport'])->name('reports.leave-credits');
-    });
-    
-    // Attendance routes
-    Route::prefix('attendance')->middleware(['auth'])->group(function () {
-        Route::get('/', [AttendanceController::class, 'index'])->name('attendance.index');
-    });
-    
-    // Admin Routes (Admin only)
-    Route::prefix('employees')->middleware(['auth'])->group(function () {
-<<<<<<< C:/ISU-FLOW/systemF/routes/web.php
->>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/routes/web.php
-=======
->>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/routes/web.php
         Route::get('/', [EmployeeController::class, 'index'])->name('employees.index');
         Route::get('/create', [EmployeeController::class, 'create'])->name('employees.create');
         Route::post('/', [EmployeeController::class, 'store'])->name('employees.store');
@@ -227,35 +94,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
         Route::put('/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
         Route::delete('/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
-
     });
-<<<<<<< C:/ISU-FLOW/systemF/routes/web.php
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Admin Leave Approval
-    |--------------------------------------------------------------------------
-    */
-
+    // Admin Leave Approval
     Route::prefix('admin')->middleware(['role:hr|admin'])->group(function () {
-
-=======
-    
-    // Admin Routes (for HR and administrators)
-    Route::prefix('admin')->middleware(['auth'])->group(function () {
-<<<<<<< C:/ISU-FLOW/systemF/routes/web.php
->>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/routes/web.php
-=======
->>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/routes/web.php
         Route::get('/leave-applications', [LeaveApplicationController::class, 'adminIndex'])->name('admin.leave-applications.index');
         Route::post('/leave-applications/{leaveApplication}/approve', [LeaveApplicationController::class, 'approve'])->name('admin.leave-applications.approve');
         Route::post('/leave-applications/{leaveApplication}/reject', [LeaveApplicationController::class, 'reject'])->name('admin.leave-applications.reject');
-
     });
 
 });
-
 
 /*
 |--------------------------------------------------------------------------
@@ -264,11 +112,5 @@ Route::middleware(['auth'])->group(function () {
 */
 
 Route::get('/', function () {
-
-    if (auth()->check()) {
-        return redirect('/dashboard');
-    }
-
-    return redirect('/login');
-
+    return auth()->check() ? redirect('/dashboard') : redirect('/login');
 });

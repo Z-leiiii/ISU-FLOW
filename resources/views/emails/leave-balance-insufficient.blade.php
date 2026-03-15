@@ -104,6 +104,17 @@
             font-weight: 500;
             margin-top: 15px;
         }
+        .shortfall {
+            color: #dc2626;
+        }
+        .computation-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .action-list {
+            margin: 0;
+            padding-left: 20px;
+        }
     </style>
 </head>
 <body>
@@ -138,7 +149,7 @@
                     </div>
                     <div class="balance-item">
                         <div class="balance-label">Shortfall</div>
-                        <div class="balance-value" style="color: #dc2626;">{{ $requestedDays - $availableBalance }} days</div>
+                        <div class="balance-value shortfall">{{ $requestedDays - $availableBalance }} days</div>
                     </div>
                 </div>
             </div>
@@ -158,7 +169,7 @@
 
             <div class="info-card">
                 <div class="info-title">💡 What You Can Do</div>
-                <ul style="margin: 0; padding-left: 20px;">
+                <ul class="action-list">
                     <li>Apply for a shorter duration within your available balance</li>
                     <li>Wait for your leave credits to accumulate (monthly/annual accrual)</li>
                     <li>Submit designation documents for enhanced leave credits (if applicable)</li>

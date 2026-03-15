@@ -6,11 +6,11 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Employee Management</h3>
-        <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <span style="background: rgba(34, 197, 94, 0.1); color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem;">
+        <div class="inline-flex items-center gap-2">
+            <span class="badge-success">
                 {{ $employees->count() }} Total Employees
             </span>
-            <span style="background: rgba(34, 197, 94, 0.1); color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem;">
+            <span class="badge-success">
                 {{ $employees->where('is_active', true)->count() }} Active
             </span>
         </div>
@@ -20,11 +20,11 @@
     </div>
     
     <!-- Search and Filters -->
-    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-        <form method="GET" style="display: flex; gap: 0.5rem; align-items: center; flex: 1;">
+    <div class="flex gap-4 mb-6 flex-wrap">
+        <form method="GET" class="flex items-center gap-2 flex-1">
             <input type="text" name="search" placeholder="Search employees..." 
-                   value="{{ request('search') }}" class="form-control" style="flex: 1; max-width: 300px;">
-            <select name="department" class="form-control" style="width: auto;">
+                   value="{{ request('search') }}" class="form-input" style="flex: 1; max-width: 300px;">
+            <select name="department" class="form-select" style="width: auto;">
                 <option value="">All Departments</option>
                 @foreach($departments as $department)
                     <option value="{{ $department->id }}" {{ request('department') == $department->id ? 'selected' : '' }}>
@@ -32,7 +32,7 @@
                     </option>
                 @endforeach
             </select>
-            <select name="status" class="form-control" style="width: auto;">
+            <select name="status" class="form-select" style="width: auto;">
                 <option value="">All Status</option>
                 <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Active</option>
                 <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Inactive</option>
@@ -42,7 +42,7 @@
         </form>
     </div>
     
-    <div style="overflow-x: auto;">
+    <div class="table-container">
         <table class="table">
             <thead>
                 <tr>
@@ -60,44 +60,44 @@
                 @forelse($employees as $employee)
                     <tr>
                         <td>
-                            <div style="font-weight: 600; display: flex; align-items: center; gap: 0.5rem;">
+                            <div class="flex items-center gap-2 font-weight-600">
                                 @if($employee->profile_photo)
                                     <img src="{{ asset('storage/' . $employee->profile_photo) }}" 
                                          alt="{{ $employee->full_name }}" 
-                                         style="width: 32px; height: 32px; border-radius: 50%; object-fit: cover;">
+                                         class="employee-avatar-small">
                                 @else
-                                    <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 0.8rem;">
+                                    <div class="employee-avatar-placeholder">
                                         {{ substr($employee->first_name, 0, 1) }}{{ substr($employee->last_name, 0, 1) }}
                                     </div>
                                 @endif
                                 {{ $employee->full_name }}
                             </div>
-                            <div style="font-size: 0.85rem; color: #666;">{{ $employee->email }}</div>
+                            <div class="text-sm text-gray-600">{{ $employee->email }}</div>
                         </td>
                         <td>
-                            <span style="font-family: monospace; background: rgba(0,0,0,0.05); padding: 0.25rem 0.5rem; border-radius: 0.25rem;">
+                            <span class="employee-id-badge">
                                 {{ $employee->employee_id }}
                             </span>
                         </td>
                         <td>
                             @if($employee->department)
-                                <span style="background: rgba(59, 130, 246, 0.1); color: #2563eb; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem;">
+                                <span class="department-badge">
                                     {{ $employee->department->name }}
                                 </span>
                             @else
-                                <span style="color: #666;">No Department</span>
+                                <span class="text-gray-600">No Department</span>
                             @endif
                         </td>
                         <td>
                             @if($employee->designation)
-                                <div style="font-weight: 600;">{{ $employee->designation->name }}</div>
+                                <div class="font-weight-600">{{ $employee->designation->name }}</div>
                             @else
-                                <span style="color: #666;">No Designation</span>
+                                <span class="text-gray-600">No Designation</span>
                             @endif
                         </td>
                         <td>
-                            <div style="font-size: 0.85rem; color: #666;">{{ $employee->contact_number }}</div>
-                            <div style="font-size: 0.85rem; color: #666;">{{ $employee->address }}</div>
+                            <div class="text-sm text-gray-600">{{ $employee->contact_number }}</div>
+                            <div class="text-sm text-gray-600">{{ $employee->address }}</div>
                         </td>
                         <td>
                             @if($employee->is_active)
@@ -111,23 +111,23 @@
                             @endif
                         </td>
                         <td>
-                            <div style="font-size: 0.85rem; color: #666;">
+                            <div class="text-sm text-gray-600">
                                 {{ $employee->date_hired ? $employee->date_hired->format('M d, Y') : 'N/A' }}
                             </div>
                         </td>
                         <td>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <a href="{{ route('employees.show', $employee) }}" class="btn btn-primary" style="padding: 0.5rem 1rem;">
+                            <div class="action-buttons">
+                                <a href="{{ route('employees.show', $employee) }}" class="btn btn-primary btn-sm">
                                     <i class="fas fa-eye"></i> View
                                 </a>
-                                <a href="{{ route('employees.edit', $employee) }}" class="btn btn-secondary" style="padding: 0.5rem 1rem;">
+                                <a href="{{ route('employees.edit', $employee) }}" class="btn btn-secondary btn-sm">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
-                                <form method="POST" action="{{ route('employees.destroy', $employee) }}" style="display: inline;" 
+                                <form method="POST" action="{{ route('employees.destroy', $employee) }}" class="inline-form" 
                                       onsubmit="return confirm('Are you sure you want to delete this employee?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger" style="padding: 0.5rem 1rem;">
+                                    <button type="submit" class="btn btn-danger btn-sm">
                                         <i class="fas fa-trash"></i> Delete
                                     </button>
                                 </form>
@@ -136,9 +136,9 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" style="text-align: center; padding: 2rem;">
-                            <div style="color: #666;">
-                                <i class="fas fa-users" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                        <td colspan="8" class="text-center p-8">
+                            <div class="text-gray-600">
+                                <i class="fas fa-users empty-icon"></i>
                                 No employees found.
                             </div>
                         </td>

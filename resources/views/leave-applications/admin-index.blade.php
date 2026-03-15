@@ -6,26 +6,26 @@
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">Leave Applications Management</h3>
-        <div style="display: flex; gap: 0.5rem; align-items: center;">
-            <span style="background: rgba(34, 197, 94, 0.1); color: #16a34a; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem;">
+        <div class="inline-flex items-center gap-2">
+            <span class="badge-success">
                 {{ $applications->count() }} Total Applications
             </span>
-            <span style="background: rgba(251, 146, 60, 0.1); color: #ea580c; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.85rem;">
+            <span class="badge-warning">
                 {{ $applications->where('status', 'pending')->count() }} Pending
             </span>
         </div>
     </div>
     
     <!-- Filters -->
-    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
-        <form method="GET" style="display: flex; gap: 0.5rem; align-items: center;">
-            <select name="status" class="form-control" style="width: auto;">
+    <div class="flex gap-4 mb-6 flex-wrap">
+        <form method="GET" class="flex items-center gap-2">
+            <select name="status" class="form-select" style="width: auto;">
                 <option value="">All Status</option>
                 <option value="pending" {{ request('status') == 'pending' ? 'selected' : '' }}>Pending</option>
                 <option value="approved" {{ request('status') == 'approved' ? 'selected' : '' }}>Approved</option>
                 <option value="rejected" {{ request('status') == 'rejected' ? 'selected' : '' }}>Rejected</option>
             </select>
-            <select name="leave_type" class="form-control" style="width: auto;">
+            <select name="leave_type" class="form-select" style="width: auto;">
                 <option value="">All Leave Types</option>
                 @foreach($leaveTypes as $type)
                     <option value="{{ $type->id }}" {{ request('leave_type') == $type->id ? 'selected' : '' }}>
@@ -38,7 +38,7 @@
         </form>
     </div>
     
-    <div style="overflow-x: auto;">
+    <div class="table-container">
         <table class="table">
             <thead>
                 <tr>
@@ -55,22 +55,22 @@
                 @forelse($applications as $application)
                     <tr>
                         <td>
-                            <div style="font-weight: 600;">{{ $application->user->full_name }}</div>
-                            <div style="font-size: 0.85rem; color: #666;">{{ $application->user->email }}</div>
+                            <div class="font-weight-600">{{ $application->user->full_name }}</div>
+                            <div class="text-sm text-gray-600">{{ $application->user->email }}</div>
                             @if($application->user->department)
-                                <div style="font-size: 0.85rem; color: #666;">{{ $application->user->department->name }}</div>
+                                <div class="text-sm text-gray-600">{{ $application->user->department->name }}</div>
                             @endif
                         </td>
                         <td>
-                            <div style="font-weight: 600;">{{ $application->leaveType->name }}</div>
-                            <div style="font-size: 0.85rem; color: #666;">{{ $application->days_requested }} days</div>
+                            <div class="font-weight-600">{{ $application->leaveType->name }}</div>
+                            <div class="text-sm text-gray-600">{{ $application->days_requested }} days</div>
                         </td>
                         <td>
-                            <div style="font-weight: 600;">{{ $application->start_date->format('M d, Y') }}</div>
-                            <div style="font-size: 0.85rem; color: #666;">to {{ $application->end_date->format('M d, Y') }}</div>
+                            <div class="font-weight-600">{{ $application->start_date->format('M d, Y') }}</div>
+                            <div class="text-sm text-gray-600">to {{ $application->end_date->format('M d, Y') }}</div>
                         </td>
                         <td>
-                            <div style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ $application->reason }}">
+                            <div class="text-truncate" title="{{ $application->reason }}">
                                 {{ $application->reason }}
                             </div>
                         </td>
@@ -90,25 +90,25 @@
                             @endif
                         </td>
                         <td>
-                            <div style="font-size: 0.85rem; color: #666;">
+                            <div class="text-sm text-gray-600">
                                 {{ $application->created_at->format('M d, Y') }}
                             </div>
                         </td>
                         <td>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <a href="{{ route('leave-applications.show', $application) }}" class="btn btn-primary" style="padding: 0.5rem 1rem;">
+                            <div class="action-buttons">
+                                <a href="{{ route('leave-applications.show', $application) }}" class="btn btn-primary btn-sm">
                                     <i class="fas fa-eye"></i> View
                                 </a>
                                 @if($application->status == 'pending')
-                                    <form method="POST" action="{{ route('admin.leave-applications.approve', $application) }}" style="display: inline;">
+                                    <form method="POST" action="{{ route('admin.leave-applications.approve', $application) }}" class="inline-form">
                                         @csrf
-                                        <button type="submit" class="btn btn-success" style="padding: 0.5rem 1rem;" onclick="return confirm('Are you sure you want to approve this leave application?')">
+                                        <button type="submit" class="btn btn-success btn-sm" onclick="return confirm('Are you sure you want to approve this leave application?')">
                                             <i class="fas fa-check"></i> Approve
                                         </button>
                                     </form>
-                                    <form method="POST" action="{{ route('admin.leave-applications.reject', $application) }}" style="display: inline;">
+                                    <form method="POST" action="{{ route('admin.leave-applications.reject', $application) }}" class="inline-form">
                                         @csrf
-                                        <button type="submit" class="btn btn-danger" style="padding: 0.5rem 1rem;" onclick="return confirm('Are you sure you want to reject this leave application?')">
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to reject this leave application?')">
                                             <i class="fas fa-times"></i> Reject
                                         </button>
                                     </form>
@@ -118,9 +118,9 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 2rem;">
-                            <div style="color: #666;">
-                                <i class="fas fa-file-alt" style="font-size: 2rem; margin-bottom: 1rem; display: block;"></i>
+                        <td colspan="7" class="text-center p-8">
+                            <div class="text-gray-600">
+                                <i class="fas fa-file-alt empty-icon"></i>
                                 No leave applications found.
                             </div>
                         </td>

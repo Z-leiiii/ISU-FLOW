@@ -116,6 +116,22 @@
         .btn-secondary {
             background: #64748b;
         }
+        .reason-box {
+            background: white;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #e2e8f0;
+        }
+        .reason-label {
+            margin-bottom: 5px;
+        }
+        .action-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .center-text {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -175,8 +191,8 @@
                     </div>
                 </div>
                 <div style="margin-top: 15px;">
-                    <div class="info-label" style="margin-bottom: 5px;">Reason for Leave:</div>
-                    <div style="background: white; padding: 10px; border-radius: 4px; border: 1px solid #e2e8f0;">
+                    <div class="reason-label">Reason for Leave:</div>
+                    <div class="reason-box">
                         {{ $leaveApplication->reason }}
                     </div>
                 </div>
@@ -184,7 +200,7 @@
 
             <div class="action-section">
                 <div class="action-title">⚡ Required Actions</div>
-                <ul style="margin: 0; padding-left: 20px;">
+                <ul class="action-list">
                     <li>Review the leave application details</li>
                     <li>Check employee's leave balance availability</li>
                     <li>Approve or reject the application</li>
@@ -192,7 +208,7 @@
                 </ul>
             </div>
 
-            <div style="text-align: center;">
+            <div class="center-text">
                 <a href="{{ route('hr.leave-applications.index') }}" class="btn">
                     Review Application
                 </a>
