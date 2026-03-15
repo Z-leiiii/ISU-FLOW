@@ -126,4 +126,46 @@ class LeaveCreditService
             'remaining' => $balance - $requestedDays
         ];
     }
+
+    /**
+     * Compute leave credits for a user and leave type
+     */
+    public static function computeLeaveCredits($user, $leaveType, $asOfDate = null): array
+    {
+        $asOfDate = $asOfDate ?? now();
+        
+        // Get user's leave credits
+        $credits = LeaveCredit::where('user_id', $user->id)
+            ->where('leave_type_id', $leaveType->id)
+            ->where('as_of_date', '<=', $asOfDate)
+            ->orderBy('as_of_date', 'desc')
+            ->first();
+
+        if (!$credits) {
+            return [
+                'total_earned' => 0,
+                'total_used' => 0,
+                'balance' => 0,
+                'computation_type' => 'none',
+                'monthly_rate' => 0,
+                'annual_rate' => 0
+            ];
+        }
+
+        // Get used leave from applications
+        $used = \App\Models\LeaveApplication::where('user_id', $user->id)
+            ->where('leave_type_id', $leaveType->id)
+            ->where('status', 'approved')
+            ->where('start_date', '<=', $asOfDate)
+            ->sum('days_requested');
+
+        return [
+            'total_earned' => $credits->credits_earned,
+            'total_used' => $used,
+            'balance' => $credits->credits_earned - $used,
+            'computation_type' => $credits->computation_type,
+            'monthly_rate' => $credits->monthly_rate,
+            'annual_rate' => $credits->annual_rate
+        ];
+    }
 }

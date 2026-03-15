@@ -24,12 +24,18 @@ class DashboardController extends Controller
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 
         if ($user->hasRole('admin') || $user->hasRole('hr')) {
             return $this->hrDashboard();
         }
 
 =======
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
@@ -41,6 +47,12 @@ class DashboardController extends Controller
         
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
@@ -58,12 +70,18 @@ class DashboardController extends Controller
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 
         // Update leave credits using computation service
         LeaveCreditService::updateUserAllLeaveCredits($user->id);
 
         // Get leave balances
 =======
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
@@ -80,6 +98,12 @@ class DashboardController extends Controller
         // Get updated leave balances
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
@@ -89,6 +113,8 @@ class DashboardController extends Controller
             ->with('leaveType')
             ->get();
 
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
@@ -105,6 +131,10 @@ class DashboardController extends Controller
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
         // Get recent leave applications
         $recentApplications = LeaveApplication::where('user_id', $user->id)
             ->with('leaveType')
@@ -115,6 +145,12 @@ class DashboardController extends Controller
         // Get pending designation documents
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
@@ -124,6 +160,8 @@ class DashboardController extends Controller
             ->where('status', 'pending')
             ->count();
 
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
@@ -143,6 +181,10 @@ class DashboardController extends Controller
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
         // Get unread notifications
         $unreadNotifications = Notification::where('user_id', $user->id)
             ->where('is_read', false)
@@ -156,6 +198,12 @@ class DashboardController extends Controller
         // Get current designation
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
@@ -183,7 +231,17 @@ class DashboardController extends Controller
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 
+=======
+        
+        // Get statistics
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+        
+        // Get statistics
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
         
         // Get statistics
@@ -204,6 +262,8 @@ class DashboardController extends Controller
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
         // Recent applications
         $recentApplications = LeaveApplication::with(['user', 'leaveType'])
             ->latest()
@@ -215,6 +275,10 @@ class DashboardController extends Controller
 
         // Leave without pay applications
 =======
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
@@ -233,6 +297,12 @@ class DashboardController extends Controller
         // Get leave without pay applications
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
@@ -265,7 +335,17 @@ class DashboardController extends Controller
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 
+=======
+        
+        // Check if user has no current designation
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+        
+        // Check if user has no current designation
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
         
         // Check if user has no current designation
@@ -285,6 +365,8 @@ class DashboardController extends Controller
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
         $leaveBalances = LeaveCredit::where('user_id', $user->id)
             ->with('leaveType')
             ->get();
@@ -297,6 +379,10 @@ class DashboardController extends Controller
 
             elseif ($balance->balance <= 1) {
 =======
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
@@ -318,6 +404,12 @@ class DashboardController extends Controller
             } elseif ($balance->balance <= 1) {
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
@@ -334,7 +426,15 @@ class DashboardController extends Controller
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
      * Leave balance details
+=======
+     * Get leave balance details
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+     * Get leave balance details
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
      * Get leave balance details
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
@@ -351,10 +451,16 @@ class DashboardController extends Controller
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 
         $leaveBalances = LeaveCredit::where('user_id', $user->id)
             ->with('leaveType')
 =======
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
@@ -370,6 +476,12 @@ class DashboardController extends Controller
             })
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
@@ -384,7 +496,15 @@ class DashboardController extends Controller
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
      * Leave history
+=======
+     * Get leave history
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+     * Get leave history
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
      * Get leave history
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
@@ -401,11 +521,17 @@ class DashboardController extends Controller
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 
         $applications = LeaveApplication::where('user_id', $user->id)
             ->with('leaveType')
             ->latest()
 =======
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
@@ -416,6 +542,12 @@ class DashboardController extends Controller
             ->orderBy('created_at', 'desc')
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/DashboardController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/DashboardController.php

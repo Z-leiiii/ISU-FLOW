@@ -15,10 +15,16 @@ use App\Models\Notification;
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 
 use App\Services\LeaveCreditService;
 use App\Services\EmailNotificationService;
 =======
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
 =======
@@ -92,6 +98,12 @@ class LeaveApplicationController extends Controller
         return view('leave-applications.create', compact('leaveTypes', 'leaveBalances'));
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
@@ -112,6 +124,8 @@ class LeaveApplicationController extends Controller
             'attachment' => 'nullable|file|max:2048'
         ]);
 
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
@@ -139,6 +153,10 @@ class LeaveApplicationController extends Controller
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
         $leaveType = LeaveType::findOrFail($request->leave_type_id);
         
         // Calculate total days
@@ -149,6 +167,12 @@ class LeaveApplicationController extends Controller
         }, $endDate) + 1;
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
 
         // Check leave balance using new computation service
         $validation = LeaveCreditService::validateLeaveBalance($user->id, $request->leave_type_id, $numberOfDays);
@@ -165,6 +189,8 @@ class LeaveApplicationController extends Controller
             return back()->with('error', $validation['message']);
         }
 
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 =======
 
         // Check leave balance using new computation service
@@ -203,6 +229,16 @@ class LeaveApplicationController extends Controller
             return back()->with('error', $validation['message']);
         }
 
+        $isWithoutPay = false;
+        $warningMessage = '';
+
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+        $isWithoutPay = false;
+        $warningMessage = '';
+
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
         $isWithoutPay = false;
         $warningMessage = '';
 
@@ -238,6 +274,8 @@ class LeaveApplicationController extends Controller
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
             'days' => $days,
             'reason' => $request->reason,
             'attachment' => $attachmentPath,
@@ -250,6 +288,10 @@ class LeaveApplicationController extends Controller
             ->route('leave-applications.index')
             ->with('success', 'Leave application submitted successfully.');
 =======
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
             'number_of_days' => $numberOfDays,
             'reason' => $request->reason,
             'status' => 'pending',
@@ -257,6 +299,8 @@ class LeaveApplicationController extends Controller
             'document_path' => $documentPath,
         ]);
 
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 =======
             'number_of_days' => $numberOfDays,
             'reason' => $request->reason,
@@ -265,6 +309,10 @@ class LeaveApplicationController extends Controller
             'document_path' => $documentPath,
         ]);
 
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
         // Create notifications and send emails
         EmailNotificationService::sendNewApplicationNotification($leaveApplication);
@@ -282,6 +330,8 @@ class LeaveApplicationController extends Controller
                 ],
             ]);
         }
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 
 =======
@@ -308,6 +358,12 @@ class LeaveApplicationController extends Controller
                 ],
             ]);
         }
+
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
 
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
 =======
@@ -341,6 +397,12 @@ class LeaveApplicationController extends Controller
             ->with('success', $message);
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
@@ -499,6 +561,12 @@ class LeaveApplicationController extends Controller
      * Approve a leave application.
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
@@ -507,6 +575,8 @@ class LeaveApplicationController extends Controller
      */
     public function reject(Request $request, $id)
     {
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
@@ -537,6 +607,10 @@ class LeaveApplicationController extends Controller
 =======
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
         $this->authorize('approve', $leaveApplication);
         
         if ($leaveApplication->status !== 'pending') {
@@ -546,6 +620,8 @@ class LeaveApplicationController extends Controller
         $leaveApplication->update([
             'status' => 'approved',
             'approved_at' => now(),
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 =======
         $this->authorize('approve', $leaveApplication);
@@ -557,6 +633,10 @@ class LeaveApplicationController extends Controller
         $leaveApplication->update([
             'status' => 'approved',
             'approved_at' => now(),
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
@@ -586,14 +666,22 @@ class LeaveApplicationController extends Controller
         return back()->with('success', 'Leave application approved successfully.');
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
     }
 
     /**
      * Reject a leave application.
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
      */
     public function downloadAttachment($id)
     {
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
         $application = LeaveApplication::findOrFail($id);
 
@@ -613,14 +701,20 @@ class LeaveApplicationController extends Controller
      * Reject a leave application.
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
 =======
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
     }
 
     /**
      * Reject a leave application.
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
      */
     public function destroy($id)
     {
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
         $application = LeaveApplication::findOrFail($id);
@@ -692,6 +786,25 @@ class LeaveApplicationController extends Controller
         ]);
         
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+        $this->authorize('approve', $leaveApplication);
+        
+        if ($leaveApplication->status !== 'pending') {
+            return back()->with('error', 'Application has already been processed.');
+        }
+        
+        $request->validate([
+            'hr_remarks' => 'required|string|max:500',
+        ]);
+        
+        $leaveApplication->update([
+            'status' => 'disapproved',
+            'disapproved_at' => now(),
+            'disapproved_by' => Auth::id(),
+            'hr_remarks' => $request->hr_remarks,
+        ]);
+        
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
         // Create notification and send email
         Notification::create([
             'user_id' => $leaveApplication->user_id,
@@ -714,8 +827,50 @@ class LeaveApplicationController extends Controller
         return back()->with('success', 'Leave application disapproved successfully.');
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 <<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
+<<<<<<< C:/ISU-FLOW/systemF/app/Http/Controllers/LeaveApplicationController.php
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
 =======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+>>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
+=======
+        $this->authorize('approve', $leaveApplication);
+        
+        if ($leaveApplication->status !== 'pending') {
+            return back()->with('error', 'Application has already been processed.');
+        }
+        
+        $request->validate([
+            'hr_remarks' => 'required|string|max:500',
+        ]);
+        
+        $leaveApplication->update([
+            'status' => 'disapproved',
+            'disapproved_at' => now(),
+            'disapproved_by' => Auth::id(),
+            'hr_remarks' => $request->hr_remarks,
+        ]);
+        
+        // Create notification and send email
+        Notification::create([
+            'user_id' => $leaveApplication->user_id,
+            'title' => 'Leave Application Disapproved',
+            'message' => 'Your leave application has been disapproved.',
+            'type' => 'leave_approval',
+            'data' => [
+                'application_id' => $leaveApplication->id,
+            ],
+        ]);
+        
+        // Send email notification
+        EmailNotificationService::sendApplicationStatusNotification(
+            $leaveApplication,
+            'rejected',
+            $request->hr_remarks,
+            Auth::user()
+        );
+        
+        return back()->with('success', 'Leave application disapproved successfully.');
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php
 =======
 >>>>>>> C:/Users/zaira/.windsurf/worktrees/systemF/systemF-4394a312/app/Http/Controllers/LeaveApplicationController.php

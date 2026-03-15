@@ -41,16 +41,13 @@ class User extends Authenticatable
     /**
      * Attribute casting
      */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'date_hired' => 'date',
-            'salary' => 'decimal:2',
-            'is_active' => 'boolean',
-        ];
-    }
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'date_hired' => 'date',
+        'salary' => 'decimal:2',
+        'is_active' => 'boolean',
+    ];
 
     /**
      * Department relationship
@@ -69,7 +66,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Leave credits
+     * Leave credits relationship
      */
     public function leaveCredits()
     {
@@ -77,7 +74,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Leave applications
+     * Leave applications relationship
      */
     public function leaveApplications()
     {
@@ -85,7 +82,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Designation documents
+     * Designation documents relationship
      */
     public function designationDocuments()
     {
@@ -93,7 +90,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Notifications
+     * Notifications relationship
      */
     public function notifications()
     {
@@ -101,7 +98,7 @@ class User extends Authenticatable
     }
 
     /**
-     * Compensatory Time Off records
+     * Compensatory Time Off records relationship
      */
     public function compensatoryTimeOffs()
     {
@@ -111,8 +108,8 @@ class User extends Authenticatable
     /**
      * Full name accessor
      */
-    public function getFullNameAttribute()
+    public function getFullNameAttribute(): string
     {
-        return "{$this->first_name} {$this->last_name}";
+        return trim("{$this->first_name} {$this->last_name}");
     }
 }

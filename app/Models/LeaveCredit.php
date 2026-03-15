@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class LeaveCredit extends Model
 {
@@ -23,7 +24,7 @@ class LeaveCredit extends Model
     ];
 
     /**
-     * User relationship
+     * Get user that owns leave credit.
      */
     public function user()
     {
@@ -39,41 +40,39 @@ class LeaveCredit extends Model
     }
 
     /**
-     * Compute leave credits
+     * Compute leave credits based on designation and leave type
      */
     public static function computeLeaveCredits($user, $leaveType, $asOfDate = null)
     {
         $asOfDate = $asOfDate ?? now();
         $user = User::find($user->id);
 
-        // Check if user has designation
+        // Check if user has an approved designation
         $hasDesignation = $user->designation && $user->designation->approved_at;
 
         if ($hasDesignation) {
-            // Faculty with designation
             return self::computeDesignationBasedCredits($user, $leaveType, $asOfDate);
         } else {
-            // Faculty without designation
             return self::computeServiceBasedCredits($user, $leaveType, $asOfDate);
         }
     }
 
     /**
-     * Faculty WITH designation
-     * 1.25 leave per month
+     * Compute credits for faculty with designation
      */
     private static function computeDesignationBasedCredits($user, $leaveType, $asOfDate)
     {
         $monthsWorked = self::calculateMonthsWorked($user, $asOfDate);
-        $monthlyRate = 1.25;
+        $monthlyRate = 1.25; // 15 days annually = 1.25 per month
 
-        $totalEarned = $monthsWorked * $monthlyRate;
-
-        if (!in_array($leaveType->code, ['VL','VACATION','SL','SICK'])) {
-            $totalEarned = self::convertServiceCredits($totalEarned);
+        if (in_array($leaveType->code, ['VL','VACATION','SL','SICK'])) {
+            $totalEarned = $monthsWorked * $monthlyRate;
+        } else {
+            $totalEarned = self::convertServiceCredits($monthsWorked * $monthlyRate);
         }
 
         return [
+            'total_earned' => min($totalEarned, $leaveType->max_days_per_year ?? 30),
             'balance' => min($totalEarned, $leaveType->max_days_per_year ?? 30),
             'computation_type' => 'designation_based',
             'monthly_rate' => $monthlyRate,
@@ -82,14 +81,12 @@ class LeaveCredit extends Model
     }
 
     /**
-     * Faculty WITHOUT designation
-     * 15 days per year service credit
+     * Compute credits for faculty without designation
      */
     private static function computeServiceBasedCredits($user, $leaveType, $asOfDate)
     {
         $yearsWorked = self::calculateYearsWorked($user, $asOfDate);
-        $annualRate = 15;
-
+        $annualRate = 15; // 15 days per year
         $totalEarned = $yearsWorked * $annualRate;
 
         if (in_array($leaveType->code, ['VL','VACATION','SL','SICK'])) {
@@ -97,6 +94,7 @@ class LeaveCredit extends Model
         }
 
         return [
+            'total_earned' => min($totalEarned, $leaveType->max_days_per_year ?? 30),
             'balance' => min($totalEarned, $leaveType->max_days_per_year ?? 30),
             'computation_type' => 'service_based',
             'annual_rate' => $annualRate,
@@ -105,7 +103,7 @@ class LeaveCredit extends Model
     }
 
     /**
-     * Months worked
+     * Calculate months worked since user joined
      */
     private static function calculateMonthsWorked($user, $asOfDate)
     {
@@ -114,7 +112,7 @@ class LeaveCredit extends Model
     }
 
     /**
-     * Years worked
+     * Calculate years worked since user joined
      */
     private static function calculateYearsWorked($user, $asOfDate)
     {
@@ -123,8 +121,7 @@ class LeaveCredit extends Model
     }
 
     /**
-     * Convert service credits
-     * Formula: ×69 ÷30
+     * Convert service credits using formula (×69 ÷ 30)
      */
     private static function convertServiceCredits($serviceCredits)
     {
@@ -132,7 +129,7 @@ class LeaveCredit extends Model
     }
 
     /**
-     * Update or create leave credit record
+     * Update or create leave credit record for a user
      */
     public static function updateUserLeaveCredits($userId, $leaveTypeId, $asOfDate = null)
     {
@@ -146,18 +143,13 @@ class LeaveCredit extends Model
 
         $computation = self::computeLeaveCredits($user, $leaveType, $asOfDate);
 
-        $leaveCredit = self::updateOrCreate(
-            [
-                'user_id' => $userId,
-                'leave_type_id' => $leaveTypeId
-            ],
+        return self::updateOrCreate(
+            ['user_id' => $userId, 'leave_type_id' => $leaveTypeId],
             [
                 'balance' => $computation['balance'],
                 'as_of_date' => $asOfDate,
                 'remarks' => "Auto-computed: {$computation['computation_type']}"
             ]
         );
-
-        return $leaveCredit;
     }
 }

@@ -9,13 +9,15 @@ use App\Http\Controllers\DesignationDocumentController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\DTRController;
+use App\Http\Controllers\HR\DashboardController as HRDashboardController;
+use App\Http\Controllers\Faculty\DashboardController as FacultyDashboardController;
 
 /*
 |--------------------------------------------------------------------------
 | Authentication Routes
 |--------------------------------------------------------------------------
 */
-
 Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -28,7 +30,6 @@ Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, '
 | Protected Routes (Authenticated Users)
 |--------------------------------------------------------------------------
 */
-
 Route::middleware(['auth'])->group(function () {
 
     // Dashboard
@@ -36,7 +37,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/leave-balances', [DashboardController::class, 'leaveBalances'])->name('dashboard.leave-balances');
     Route::get('/leave-history', [DashboardController::class, 'leaveHistory'])->name('dashboard.leave-history');
 
-    // Leave Applications
+    // Leave Applications (User-level)
     Route::resource('leave-applications', LeaveApplicationController::class);
 
     // Designation Documents
@@ -50,7 +51,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{designationDocument}', [DesignationDocumentController::class, 'destroy'])->name('designation-documents.destroy');
         Route::get('/{designationDocument}/download', [DesignationDocumentController::class, 'download'])->name('designation-documents.download');
 
-        // HR/Admin actions
+        // HR/Admin approval actions
         Route::middleware(['role:hr|admin'])->group(function () {
             Route::post('/{designationDocument}/approve', [DesignationDocumentController::class, 'approve'])->name('designation-documents.approve');
             Route::post('/{designationDocument}/reject', [DesignationDocumentController::class, 'reject'])->name('designation-documents.reject');
@@ -63,13 +64,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/create', [LeaveCreditController::class, 'create'])->name('leave-credits.create');
         Route::post('/', [LeaveCreditController::class, 'store'])->name('leave-credits.store');
         Route::post('/update-balance/{userId}/{leaveTypeId}', [LeaveCreditController::class, 'updateLeaveBalance'])->name('leave-credits.update-balance');
-    });
-
-    // HR Routes
-    Route::prefix('hr')->middleware(['role:hr|admin'])->group(function () {
-        Route::get('/designation-documents', [DesignationDocumentController::class, 'index'])->name('hr.designation-documents.index');
-        Route::get('/leave-applications', [LeaveApplicationController::class, 'adminIndex'])->name('hr.leave-applications.index');
-        Route::get('/employees', [EmployeeController::class, 'index'])->name('hr.employees.index');
     });
 
     // Reports (HR/Admin only)
@@ -96,13 +90,43 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
     });
 
-    // Admin Leave Approval
+    // Admin Leave Approval (HR/Admin)
     Route::prefix('admin')->middleware(['role:hr|admin'])->group(function () {
         Route::get('/leave-applications', [LeaveApplicationController::class, 'adminIndex'])->name('admin.leave-applications.index');
         Route::post('/leave-applications/{leaveApplication}/approve', [LeaveApplicationController::class, 'approve'])->name('admin.leave-applications.approve');
         Route::post('/leave-applications/{leaveApplication}/reject', [LeaveApplicationController::class, 'reject'])->name('admin.leave-applications.reject');
     });
 
+    // DTR Routes
+    Route::prefix('dtr')->group(function () {
+        Route::get('/', [DTRController::class, 'index'])->name('dtr.index');
+        Route::get('/create', [DTRController::class, 'create'])->name('dtr.create');
+        Route::post('/', [DTRController::class, 'store'])->name('dtr.store');
+        Route::get('/{dtr}', [DTRController::class, 'show'])->name('dtr.show');
+        Route::get('/{dtr}/edit', [DTRController::class, 'edit'])->name('dtr.edit');
+        Route::put('/{dtr}', [DTRController::class, 'update'])->name('dtr.update');
+        Route::post('/{dtr}/approve', [DTRController::class, 'approve'])->name('dtr.approve');
+        Route::post('/{dtr}/reject', [DTRController::class, 'reject'])->name('dtr.reject');
+        Route::post('/bulk-approve', [DTRController::class, 'bulkApprove'])->name('dtr.bulk-approve');
+        Route::get('/pending-submissions', [DTRController::class, 'getPendingSubmissions'])->name('dtr.pending-submissions');
+        Route::get('/export', [DTRController::class, 'export'])->name('dtr.export');
+    });
+
+    // HR Dashboard
+    Route::prefix('hr')->middleware(['role:hr|admin'])->group(function () {
+        Route::get('/dashboard', [HRDashboardController::class, 'index'])->name('hr.dashboard');
+        Route::post('/validate-dtr/{dtr}', [HRDashboardController::class, 'validateDTR'])->name('hr.validate-dtr');
+        Route::post('/bulk-validate-dtr', [HRDashboardController::class, 'bulkValidateDTR'])->name('hr.bulk-validate-dtr');
+        Route::post('/sync-monthly-balances', [HRDashboardController::class, 'syncMonthlyBalances'])->name('hr.sync-monthly-balances');
+    });
+
+    // Faculty Dashboard
+    Route::prefix('faculty')->middleware(['role:faculty'])->group(function () {
+        Route::get('/dashboard', [FacultyDashboardController::class, 'index'])->name('faculty.dashboard');
+        Route::post('/submit-dtr', [FacultyDashboardController::class, 'submitDTR'])->name('faculty.submit-dtr');
+        Route::get('/balance-details', [FacultyDashboardController::class, 'getBalanceDetails'])->name('faculty.balance-details');
+        Route::post('/mark-notification-read/{notification}', [FacultyDashboardController::class, 'markNotificationRead'])->name('faculty.mark-notification-read');
+    });
 });
 
 /*
@@ -110,7 +134,6 @@ Route::middleware(['auth'])->group(function () {
 | Root Redirect
 |--------------------------------------------------------------------------
 */
-
 Route::get('/', function () {
     return auth()->check() ? redirect('/dashboard') : redirect('/login');
 });
